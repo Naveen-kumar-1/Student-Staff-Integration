@@ -1,0 +1,312 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background-color: #F1F1F1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+
+.sstp-container {
+    width: 100%;
+    height: 100vh;
+    background-color: #1E2A38;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.sst-box {
+    width: 90%;
+    max-width: 900px;
+    background: #FFFFFF;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 40px;
+    justify-content: space-between;
+    animation: fadeIn 1s ease-in-out;
+    overflow: hidden;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.sst-content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
+}
+
+.sst-content h1 {
+    color: #4CAF50;
+    font-size: 2.5rem;
+    animation: slideIn 0.8s ease-in-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.sst-content p {
+    color: #2E3C4F;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+.sst-box img {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.sst-box-btn {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.sst-box-btn button {
+    padding: 15px 30px;
+    font-size: 1rem;
+    color: #FFFFFF;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.sst-box-btn button:hover {
+    background-color: #388E3C;
+    transform: scale(1.05);
+}
+
+input, select {
+    padding: 10px;
+    margin: 10px 0;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+input:focus, select:focus {
+    border-color: #4CAF50;
+}
+
+input.error, select.error {
+    border-color: red;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.875rem;
+    display: none;
+    margin-top: -8px;
+}
+
+button {
+    cursor: pointer;
+    padding: 10px 20px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #388E3C;
+    transform: scale(1.05);
+}
+
+/* Toast */
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    margin: -50px auto 0 auto;
+    background-color: #FFB74D;
+    color: #1E2A38;
+    text-align: center;
+    border-radius: 10px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 1rem;
+    transform: translateX(-50%);
+}
+
+.toast.show {
+    visibility: visible;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadeout {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .sst-box {
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .sst-content h1 {
+        font-size: 2rem;
+    }
+
+    .sst-box img {
+        max-width: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sst-box {
+        padding: 20px;
+    }
+
+    .sst-content h1 {
+        font-size: 1.8rem;
+    }
+
+    .sst-box-btn button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+.input-group {
+    position: relative;
+}
+
+/* Address Textarea Styling */
+#address {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #fff;
+    resize: vertical;
+    height: 120px;
+    transition: border-color 0.3s ease-in-out;
+}
+
+#address:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+#address-error {
+    color: red;
+    font-size: 12px;
+    margin-top: -10px;
+    display: none;
+}
+
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: vertical; /* Allows vertical resizing */
+    box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+    background-color: #f9f9f9; /* Light background color */
+    color: #333; /* Dark text color for better readability */
+}
+
+textarea:focus {
+    border-color: #5b9bd5; /* Focus border color */
+    outline: none; /* Remove default outline */
+    background-color: #fff; /* White background on focus */
+}
+
+.input-field {
+    padding-right: 30px;
+}
+
+.sst-signup-form {
+    height: 400px;
+    overflow: auto;
+}
+
+/* Styling for the entire scrollbar */
+.sst-signup-form::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* Styling for the Select Box */
+select.input-field {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #fff;
+}
