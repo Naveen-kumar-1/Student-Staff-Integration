@@ -181,9 +181,15 @@ function getSiteUrl() {
                                               onclick="showAssignmentForm('edit', <?php echo $row['id']; ?>)">
                             <i class='bx bx-edit'></i>
                         </span>
-                                        <span class="delete-btn" onclick="deleteAssignment(<?php echo $row['id']; ?>)">
-                            <i class='bx bxs-trash'></i>
-                        </span>
+                                        <span class="delete-btn"
+                                              onclick="deleteAssignment(
+                                              <?php echo $row['id']; ?>,
+                                                      '<?php echo $row['class']; ?>',
+                                                      '<?php echo $row['subject']; ?>',
+                                                      '<?php echo $row['due_date']; ?>',
+                                                      )">
+                <i class='bx bxs-trash'></i>
+            </span>
 
 
                                         <!-- Button with eye icon -->

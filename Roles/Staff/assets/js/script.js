@@ -188,18 +188,19 @@ document.addEventListener('DOMContentLoaded', function () {
             try {
                 data = JSON.parse(xhr.responseText);
             } catch (e) {
-                data = { success: false, message: 'Invalid response from server' };
+                data = {success: false, message: 'Invalid response from server'};
             }
 
             if (data.success) {
                 showToast(assignmentId ? 'Assignment updated successfully!' : 'Assignment created successfully!', 'success');
                 document.getElementById('assignmentForm').reset(); // Reset the form
                 hideAssignmentForm(); // Close the form
-                if (data.redirect) {
-                    setTimeout(function () {
-                        location.reload();  }, 3000);
-                   // Reload the page
-                }
+
+                setTimeout(function () {
+                    location.reload();
+                }, 3000);
+                // Reload the page
+
             } else {
                 showToast('Error: ' + data.message, 'error');
             }
@@ -676,34 +677,34 @@ document.getElementById('cancelDelete').onclick = function () {
 };
 var currentAssignmentId = null;
 
-function deleteAssignment(assignmentId, fileName, className, subject, dueDate, studentID) {
-    // Store the assignment details for deletion
-    currentAssignmentId = assignmentId;
-    fileNameToDelete = fileName;
-    classNameToDelete = className;
-    subjectToDelete = subject;
-    dueDateToDelete = dueDate;
-    studentIDToDelete = studentID;
-    assignmentIDToDelete = assignmentId;
+function deleteAssignment(assignmentId, className, subject, dueDate) {
+    // Check if any required parameter is missing or empty
+    if (!assignmentId || !className || !subject || !dueDate) {
+        showToast('Error: Missing required assignment details.', 'error');
+        return; // Stop execution
+    }
+
+    // Declare variables before assigning values
+    let currentAssignmentId = assignmentId;
+    let classNameToDelete = className;
+    let subjectToDelete = subject;
+    let dueDateToDelete = dueDate;
 
     // Show the custom confirmation popup
     document.getElementById('deleteConfirmationModal').style.display = 'flex';
 
     // Event listener for confirming the delete action
     document.getElementById('confirmDeleteBtn').onclick = function () {
-        // Make an AJAX request using fetch to delete the assignment
         fetch('actions/assignment/deleteAssignment.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                file_name: fileNameToDelete,
                 class_name: classNameToDelete,
                 subject: subjectToDelete,
                 due_date: dueDateToDelete,
-                student_id: studentIDToDelete,
-                assignment_id: assignmentIDToDelete
+                assignment_id: currentAssignmentId
             })
         })
             .then(response => response.json())
@@ -711,22 +712,20 @@ function deleteAssignment(assignmentId, fileName, className, subject, dueDate, s
                 if (data.success) {
                     showToast('Assignment deleted successfully!', 'success');
 
-                    // Remove the assignment from the DOM
-                    var assignmentItem = document.getElementById('assignment-' + currentAssignmentId);
+                    let assignmentItem = document.getElementById('assignment-' + currentAssignmentId);
                     if (assignmentItem) {
                         assignmentItem.remove();
                     }
 
                     setTimeout(function () {
-                        if (data.redirect) {
-                            location.reload(); // Reload the page to reflect the changes
-                        }
+
+                        location.reload();
+
                     }, 3000);
                 } else {
                     showToast('Error: ' + data.message, 'error');
                 }
 
-                // Close the modal after action is complete
                 document.getElementById('deleteConfirmationModal').style.display = 'none';
             })
             .catch(error => {
@@ -738,7 +737,6 @@ function deleteAssignment(assignmentId, fileName, className, subject, dueDate, s
 
     // Event listener for canceling the delete action
     document.getElementById('cancelDeleteBtn').onclick = function () {
-        // Close the modal if canceled
         document.getElementById('deleteConfirmationModal').style.display = 'none';
     };
 }
