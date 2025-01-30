@@ -142,6 +142,23 @@ if (is_dir($assignmentFolder)) {
         }
     }
 }
+$uploadsFolder = $_SERVER['DOCUMENT_ROOT'] . "/Student-Staff-Integration/uploads";
+
+// Check if the assignment folder exists and is empty
+if (is_dir($uploadsFolder)) {
+    $files = array_diff(scandir($uploadsFolder), ['.', '..']); // Exclude . and .. from the list
+    if (empty($files)) {
+        // Assignment folder is empty, delete it
+        if (rmdir($uploadsFolder)) {
+            $response['message'] .= ' Uploads folder deleted successfully';
+        } else {
+            $response['success'] = false;
+            $response['message'] = 'Failed to delete assignment folder';
+            echo json_encode($response);
+            exit;
+        }
+    }
+}
 
 
 // Prepare success message based on what was deleted
