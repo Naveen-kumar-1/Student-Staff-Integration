@@ -740,3 +740,55 @@ function deleteAssignment(assignmentId, className, subject, dueDate) {
         document.getElementById('deleteConfirmationModal').style.display = 'none';
     };
 }
+
+function saveAttendance(classId) {
+    let attendanceData = [];
+
+    // Collect attendance data for each student
+    document.querySelectorAll(`#${classId} .attendance`).forEach(select => {
+        let studentId = select.getAttribute("data-student-id");
+        let studentName = select.getAttribute("data-student-name");
+        let period = select.getAttribute("data-period");
+        let status = select.value;
+
+        // Find or create a student object
+        let student = attendanceData.find(s => s.student_id === studentId);
+        if (!student) {
+            student = {
+                student_id: studentId,
+                student_name: studentName,  // Store student name
+                class: classId,
+                attendance: {}
+            };
+            attendanceData.push(student);
+        }
+
+        // Add period attendance status
+        student.attendance[`period_${period}`] = status;
+    });
+
+    // Send the data to PHP to save in the database
+    fetch("actions/Attendance/saveAttendance.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            class: classId,
+            date: new Date().toISOString().split('T')[0],  // Get current date in YYYY-MM-DD format
+            students: attendanceData
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            showToast(data.message, 'success');  // Show the success or error message
+            setTimeout(function () {
+                location.reload();
+            }, 3000);
+        })
+        .catch(error => {
+            console.log(error);
+            showToast("Error  attendance saving.", 'error');  // Replace with toast message on failure
+        });
+}
+
+// Function to update the current date and time
+

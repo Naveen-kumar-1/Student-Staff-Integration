@@ -1,52 +1,53 @@
 <?php
 session_start();
-if ( ! isset( $_SESSION['staff_id'] ) ) {
-	header( 'Location: /Student-Staff-Integration/' );
-	exit;
+if (!isset($_SESSION['staff_id'])) {
+    header('Location: /Student-Staff-Integration/');
+    exit;
 }
 $staff_id = $_SESSION['staff_id'];
 
 // Database connection
 $servername = "localhost";
-$username   = "root";
-$password   = "";
-$dbname     = "student_staff_integration";
+$username = "root";
+$password = "";
+$dbname = "student_staff_integration";
 
-$conn = new mysqli( $servername, $username, $password, $dbname );
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-if ( $conn->connect_error ) {
-	die( "Connection failed: " . $conn->connect_error );
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
 // Query staff data based on staff ID
-$sql  = "SELECT * FROM staffs WHERE staff_id = ?";
-$stmt = $conn->prepare( $sql );
-$stmt->bind_param( "s", $staff_id );
+$sql = "SELECT * FROM staffs WHERE staff_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $staff_id);
 $stmt->execute();
 $result = $stmt->get_result();
-if ( $result->num_rows > 0 ) {
-	$staff = $result->fetch_assoc();
+if ($result->num_rows > 0) {
+    $staff = $result->fetch_assoc();
 } else {
-	die( "Staff not found." );
+    die("Staff not found.");
 }
-function getSiteUrl() {
-	// Check if the site uses HTTPS or HTTP
-	$protocol = ( ! empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443 ) ? "https://" : "http://";
+function getSiteUrl()
+{
+    // Check if the site uses HTTPS or HTTP
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 
-	// Get the server name (e.g., localhost or example.com)
-	$host = $_SERVER['HTTP_HOST'];
+    // Get the server name (e.g., localhost or example.com)
+    $host = $_SERVER['HTTP_HOST'];
 
-	// Get the path to the current script (this will include the script file)
-	$script = $_SERVER['SCRIPT_NAME'];
+    // Get the path to the current script (this will include the script file)
+    $script = $_SERVER['SCRIPT_NAME'];
 
-	// Remove the script filename from the path to get the base URL
-	$path = dirname( $script );
+    // Remove the script filename from the path to get the base URL
+    $path = dirname($script);
 
-	// Combine the components to form the full site URL
-	$siteUrl = $protocol . $host;
+    // Combine the components to form the full site URL
+    $siteUrl = $protocol . $host;
 
-	// Return the URL (you can also trim trailing slashes if needed)
-	return rtrim( $siteUrl, '/' );
+    // Return the URL (you can also trim trailing slashes if needed)
+    return rtrim($siteUrl, '/');
 }
 
 
@@ -78,13 +79,13 @@ function getSiteUrl() {
     <div class="staff-box">
         <div class="staff-top-bar">
             <div class="staff-img">
-				<?php if ( ! empty( $staff['image_url'] ) ): ?>
+                <?php if (!empty($staff['image_url'])): ?>
                     <img src="<?php echo getSiteUrl() . '/Student-Staff-Integration/' . $staff['image_url']; ?>"
                          alt="Staff Image"/>
-				<?php else: ?>
+                <?php else: ?>
                     <img src="assets/staff-images/staff1.jpg"
                          alt="Default Staff Image"/> <!-- Default image if no staff image -->
-				<?php endif; ?>
+                <?php endif; ?>
 
             </div>
             <div class="staff-content">
@@ -148,7 +149,7 @@ function getSiteUrl() {
                     <h2>Assignments</h2>
                     <button class="create-btn" onclick="showAssignmentForm('create')">+ Create Assignment</button>
 
-					<?php
+                    <?php
                     $table = "assignments";
                     $sql_check_table = "SELECT COUNT(*) as count FROM information_schema.tables WHERE table_schema = ? AND table_name = ?";
                     $stmt_check = $conn->prepare($sql_check_table);
@@ -159,66 +160,67 @@ function getSiteUrl() {
                     $row_check = $result_check->fetch_assoc();
 
                     if ($row_check['count'] > 0) {
-					$sql  = "SELECT * FROM assignments WHERE staff_id = ?";
-					$stmt = $conn->prepare( $sql );
-					$stmt->bind_param( "s", $staff_id );
-					$stmt->execute();
-					$result = $stmt->get_result();
+                        $sql = "SELECT * FROM assignments WHERE staff_id = ?";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param("s", $staff_id);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
 
-					if ( $result->num_rows > 0 ) :
-						while ( $row = $result->fetch_assoc() ) :
-							?>
-                            <!-- Assignment List -->
-                            <div class="assignment-list">
-                                <div class="assignment-item">
-                                    <p>Class: <?php echo $row['class']; ?></p>
-                                    <p>Subject: <?php echo $row['subject']; ?></p>
-                                    <p>Due Date: <?php echo $row['due_date']; ?></p>
-                                    <p>Content: <?php echo $row['details']; ?></p>
-                                    <div class="assignment-actions">
+                        if ($result->num_rows > 0) :
+                            while ($row = $result->fetch_assoc()) :
+                                ?>
+                                <!-- Assignment List -->
+                                <div class="assignment-list">
+                                    <div class="assignment-item">
+                                        <p>Class: <?php echo $row['class']; ?></p>
+                                        <p>Subject: <?php echo $row['subject']; ?></p>
+                                        <p>Due Date: <?php echo $row['due_date']; ?></p>
+                                        <p>Content: <?php echo $row['details']; ?></p>
+                                        <div class="assignment-actions">
 
                                         <span class="edit-btn"
                                               onclick="showAssignmentForm('edit', <?php echo $row['id']; ?>)">
                             <i class='bx bx-edit'></i>
                         </span>
-                                        <span class="delete-btn"
-                                              onclick="deleteAssignment(
-                                              <?php echo $row['id']; ?>,
-                                                      '<?php echo $row['class']; ?>',
-                                                      '<?php echo $row['subject']; ?>',
-                                                      '<?php echo $row['due_date']; ?>',
-                                                      )">
+                                            <span class="delete-btn"
+                                                  onclick="deleteAssignment(
+                                                  <?php echo $row['id']; ?>,
+                                                          '<?php echo $row['class']; ?>',
+                                                          '<?php echo $row['subject']; ?>',
+                                                          '<?php echo $row['due_date']; ?>',
+                                                          )">
                 <i class='bx bxs-trash'></i>
             </span>
 
 
-                                        <!-- Button with eye icon -->
-										<?php if ( isset( $row['submitted_students'] ) && ! empty( trim( $row['submitted_students'] ) ) ) : ?>
-                                            <span class="display-submitted-student"
-                                                  onclick="showSubmittedStudentList(<?php echo $row['id']; ?>)">
+                                            <!-- Button with eye icon -->
+                                            <?php if (isset($row['submitted_students']) && !empty(trim($row['submitted_students']))) : ?>
+                                                <span class="display-submitted-student"
+                                                      onclick="showSubmittedStudentList(<?php echo $row['id']; ?>)">
     <i class="fas fa-eye"></i>
 </span>
-										<?php
-                                        endif; ?>
+                                            <?php
+                                            endif; ?>
 
-                                        <!-- Modal Popup for Submitted Students -->
-                                        <!-- Modal to display submitted students -->
-                                        <div id="submittedStudentModal" class="modal">
-                                            <div class="modal-content">
+                                            <!-- Modal Popup for Submitted Students -->
+                                            <!-- Modal to display submitted students -->
+                                            <div id="submittedStudentModal" class="modal">
+                                                <div class="modal-content">
                                                 <span class="close"
                                                       onclick="document.getElementById('submittedStudentModal').style.display='none'">&times;</span>
-                                                <h2>Submitted Students</h2>
-                                                <table id="submittedStudentTable" class="table">
-                                                    <!-- Table content will be dynamically generated here -->
-                                                </table>
+                                                    <h2>Submitted Students</h2>
+                                                    <table id="submittedStudentTable" class="table">
+                                                        <!-- Table content will be dynamically generated here -->
+                                                    </table>
+                                                </div>
                                             </div>
+
+
                                         </div>
-
-
                                     </div>
                                 </div>
-                            </div>
-						<?php endwhile; endif; } ?>
+                            <?php endwhile; endif;
+                    } ?>
 
                     <!-- Assignment Form -->
                     <div class="assignment-form" style="display: none;">
@@ -248,7 +250,8 @@ function getSiteUrl() {
 
                             <!-- Subject Input -->
                             <label for="assignment-subject">Subject:</label>
-                            <input type="text" id="assignment-subject" name="assignment_subject" placeholder="Enter Subject" required>
+                            <input type="text" id="assignment-subject" name="assignment_subject"
+                                   placeholder="Enter Subject" required>
                             <span class="error-message" id="assignment-subject-error"></span>
                             <br>
 
@@ -260,7 +263,8 @@ function getSiteUrl() {
 
                             <!-- Assignment Details -->
                             <label for="assignment-details">Assignment:</label>
-                            <textarea id="assignment-details" name="assignment_details" rows="5" placeholder="Enter assignment details" required></textarea>
+                            <textarea id="assignment-details" name="assignment_details" rows="5"
+                                      placeholder="Enter assignment details" required></textarea>
                             <span class="error-message" id="assignment-details-error"></span>
                             <br>
 
@@ -287,10 +291,10 @@ function getSiteUrl() {
 
                     <!-- Notice List -->
                     <div class="notice-list" id="notice-list">
-						<?php
+                        <?php
 
-						if ( isset( $_SESSION['staff_id'] ) ) {
-							$staff_id = $_SESSION['staff_id'];
+                        if (isset($_SESSION['staff_id'])) {
+                        $staff_id = $_SESSION['staff_id'];
                         $table = "notices";
                         $sql_check_table = "SELECT COUNT(*) as count FROM information_schema.tables WHERE table_schema = ? AND table_name = ?";
                         $stmt_check = $conn->prepare($sql_check_table);
@@ -301,28 +305,28 @@ function getSiteUrl() {
                         $row_check = $result_check->fetch_assoc();
 
                         if ($row_check['count'] > 0) {
-							// Retrieve notices for the current staff
-							$sql  = "SELECT * FROM notices WHERE staff_id = ?";
-							$stmt = $conn->prepare( $sql );
-							$stmt->bind_param( "i", $staff_id );
-							$stmt->execute();
-							$result = $stmt->get_result();
+                            // Retrieve notices for the current staff
+                            $sql = "SELECT * FROM notices WHERE staff_id = ?";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param("i", $staff_id);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
 
-							if ( $result->num_rows > 0 ):
-								while ( $row = $result->fetch_assoc() ):
-									?>
+                            if ($result->num_rows > 0):
+                                while ($row = $result->fetch_assoc()):
+                                    ?>
                                     <div class="notice-item" data-id="<?php echo $row['id']; ?>">
                                         <p><strong>Title:</strong> <span
-                                                    class="notice-title"><?php echo htmlspecialchars( $row['title'] ); ?></span>
+                                                    class="notice-title"><?php echo htmlspecialchars($row['title']); ?></span>
                                         </p>
                                         <p><strong>Details:</strong> <span
-                                                    class="notice-details"><?php echo htmlspecialchars( $row['details'] ); ?></span>
+                                                    class="notice-details"><?php echo htmlspecialchars($row['details']); ?></span>
                                         </p>
                                         <p><strong>Date:</strong> <span
-                                                    class="notice-date"><?php echo htmlspecialchars( $row['date'] ); ?></span>
+                                                    class="notice-date"><?php echo htmlspecialchars($row['date']); ?></span>
                                         </p>
                                         <p><strong>Class:</strong> <span
-                                                    class="notice-class"><?php echo htmlspecialchars( $row['class'] ); ?></span>
+                                                    class="notice-class"><?php echo htmlspecialchars($row['class']); ?></span>
                                         </p>
 
                                         <!-- Actions for Edit and Delete -->
@@ -335,8 +339,8 @@ function getSiteUrl() {
                     </span>
                                         </div>
                                     </div>
-								<?php endwhile; endif;
-						} ?>
+                                <?php endwhile; endif;
+                        } ?>
                     </div>
                     <div class="notice-form" style="display: none;">
                         <h3 id="edit-form-title">Create Notice</h3>
@@ -369,24 +373,283 @@ function getSiteUrl() {
                         <button onclick="cancelNoticeForm()">Cancel</button>
                     </div>
                 </div>
-<?php } ?>
+                <?php } ?>
 
                 <div class="display-content-box" id="attendance">
                     <h2>Maintain Attendance</h2>
+
                     <ul class="class-links">
-                        <li class="class-link" onclick="openClass('ug-first-year')">UG First Year</li>
-                        <li class="class-link" onclick="openClass('ug-second-year')">UG Second Year</li>
-                        <li class="class-link" onclick="openClass('ug-third-year')">UG Third Year</li>
-                        <li class="class-link" onclick="openClass('pg-first-year')">PG First Year</li>
-                        <li class="class-link" onclick="openClass('pg-second-year')">PG Second Year</li>
+                        <?php
+                        // Fetch unique class names
+                        $sql = "SELECT DISTINCT class FROM students";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+
+                        if ($result->num_rows > 0) {
+                            while ($class = $result->fetch_assoc()) {
+                                ?>
+                                <li class="class-link"
+                                    onclick="openClass('<?php echo htmlspecialchars($class['class']); ?>')">
+                                    <?php
+                                    switch ($class['class']):
+                                        case 'first-ug':
+                                            echo "UG First Year";
+                                            break;
+                                        case 'second-ug':
+                                            echo "UG Second Year";
+                                            break;
+                                        case 'third-ug':
+                                            echo "UG Third Year";
+                                            break;
+                                        case 'first-pg':
+                                            echo "PG First Year";
+                                            break;
+                                        case 'second-pg':
+                                            echo "PG Second Year";
+                                            break;
+                                        default:
+                                            echo "Unknown class";
+                                            break;
+                                    endswitch;
+                                    ?>
+                                </li>
+                                <?php
+                            }
+                        } else {
+                            echo "<li>No classes found.</li>";
+                        }
+                        ?>
                     </ul>
 
-                    <div class="classes" id="ug-first-year" style="display: block">UG First Year</div>
-                    <div class="classes" id="ug-second-year" style="display: none">UG Second Year</div>
-                    <div class="classes" id="ug-third-year" style="display: none">UG Third Year</div>
-                    <div class="classes" id="pg-first-year" style="display: none">PG First Year</div>
-                    <div class="classes" id="pg-second-year" style="display: none">PG Second Year</div>
+                    <p class="date-and-time">
+                        <span id="current-date"></span> |
+                        <span id="current-time"></span>
+                    </p>
+                    <script>
+                        function updateDateTime() {
+                            const currentDate = new Date();
+                            const formattedDate = currentDate.toLocaleDateString();
+                            const formattedTime = currentDate.toLocaleTimeString();
+                            document.getElementById('current-date').textContent = "Date: " + formattedDate;
+                            document.getElementById('current-time').textContent = "Time: " + formattedTime;
+                        }
+
+                        setInterval(updateDateTime, 1000);
+                        updateDateTime();
+                    </script>
+
+                    <?php
+                    // Get the current date
+                    $current_date = date('Y-m-d');
+
+                    // Fetch students for class-wise display
+                    $stmt = $conn->prepare("SELECT * FROM students ORDER BY class, first_name");
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+
+                    // Create an array to hold students grouped by class
+                    $students_by_class = [];
+                    while ($student = $result->fetch_assoc()) {
+                        $students_by_class[$student['class']][] = $student;
+                    }
+
+                    // Display students for each class
+                    foreach ($students_by_class as $class => $students) {
+                        // Fetch saved attendance data for today for this class
+                        // Check if the table exists before running the query
+                        $check_table_query = "SHOW TABLES LIKE 'student_attendance'";
+                        $check_table_result = $conn->query($check_table_query);
+
+                        if ($check_table_result->num_rows > 0) {
+                            // Table exists, fetch saved attendance data for today for this class
+                            $stmt_attendance = $conn->prepare("SELECT attendance_data FROM student_attendance WHERE class = ? AND attendance_date = ?");
+
+                            // Check if the query was prepared successfully
+                            if ($stmt_attendance) {
+                                $stmt_attendance->bind_param("ss", $class, $current_date);
+                                $stmt_attendance->execute();
+                                $attendance_result = $stmt_attendance->get_result();
+                                $attendance_data = $attendance_result->num_rows > 0 ? json_decode($attendance_result->fetch_assoc()['attendance_data'], true) : [];
+                            } else {
+                                $attendance_data = []; // If query fails, assume no attendance data
+                            }
+                        } else {
+                            $attendance_data = []; // Table does not exist, so assume no attendance data
+                        }
+
+                        ?>
+                        <div class="classes" id="<?php echo htmlspecialchars($class); ?>"
+                             style="<?php echo ($class == 'first-ug') ? 'display:block;' : 'display:none;'; ?>">
+
+                            <h3>Class: <span style="color: #007bff">
+                <?php
+                switch ($class):
+                    case 'first-ug':
+                        echo "UG First Year";
+                        break;
+                    case 'second-ug':
+                        echo "UG Second Year";
+                        break;
+                    case 'third-ug':
+                        echo "UG Third Year";
+                        break;
+                    case 'first-pg':
+                        echo "PG First Year";
+                        break;
+                    case 'second-pg':
+                        echo "PG Second Year";
+                        break;
+                    default:
+                        echo "Unknown class";
+                        break;
+                endswitch;
+                ?>
+            </span></h3>
+                            <button class="save-button"
+                                    onclick="saveAttendance('<?php echo htmlspecialchars($class); ?>')">Save
+                            </button>
+                            <table border="1" width="100%" cellpadding="5">
+                                <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>1st Period</th>
+                                    <th>2nd Period</th>
+                                    <th>Break</th>
+                                    <th>3rd Period</th>
+                                    <th>Lunch</th>
+                                    <th>4th Period</th>
+                                    <th>5th Period</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($students as $student) {
+                                    // If attendance data exists, use it; otherwise, set default "Not Set"
+                                    $student_attendance = isset($attendance_data[$student['student_id']]) ? $attendance_data[$student['student_id']]['attendance'] : [
+                                        'period_1' => 'Not Set',
+                                        'period_2' => 'Not Set',
+                                        'period_3' => 'Not Set',
+                                        'period_4' => 'Not Set',
+                                        'period_5' => 'Not Set'
+                                    ];
+                                    ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($student['first_name'] . " " . $student['last_name']); ?></td>
+
+                                        <!-- 1st Period -->
+                                        <td>
+                                            <select class="attendance"
+                                                    data-student-id="<?php echo $student['student_id']; ?>"
+                                                    data-student-name="<?php echo htmlspecialchars($student['first_name'] . " " . $student['last_name']); ?>"
+                                                    data-period="1"
+                                                    style="background-color: <?php echo ($student_attendance['period_1'] === 'Present') ? 'green' : (($student_attendance['period_1'] === 'Absent') ? 'red' : 'gray'); ?>; color: white;">
+                                                <option value="Not Set" <?php echo ($student_attendance['period_1'] === 'Not Set') ? 'selected' : ''; ?>>
+                                                    Not Set
+                                                </option>
+                                                <option value="Present" <?php echo ($student_attendance['period_1'] === 'Present') ? 'selected' : ''; ?>>
+                                                    Present
+                                                </option>
+                                                <option value="Absent" <?php echo ($student_attendance['period_1'] === 'Absent') ? 'selected' : ''; ?>>
+                                                    Absent
+                                                </option>
+                                            </select>
+                                        </td>
+
+                                        <!-- 2nd Period -->
+                                        <td>
+                                            <select class="attendance"
+                                                    data-student-id="<?php echo $student['student_id']; ?>"
+                                                    data-period="2"
+                                                    data-student-name="<?php echo htmlspecialchars($student['first_name'] . " " . $student['last_name']); ?>"
+                                                    style="background-color: <?php echo ($student_attendance['period_2'] === 'Present') ? 'green' : (($student_attendance['period_2'] === 'Absent') ? 'red' : 'gray'); ?>; color: white;">
+                                                <option value="Not Set" <?php echo ($student_attendance['period_2'] === 'Not Set') ? 'selected' : ''; ?>>
+                                                    Not Set
+                                                </option>
+                                                <option value="Present" <?php echo ($student_attendance['period_2'] === 'Present') ? 'selected' : ''; ?>>
+                                                    Present
+                                                </option>
+                                                <option value="Absent" <?php echo ($student_attendance['period_2'] === 'Absent') ? 'selected' : ''; ?>>
+                                                    Absent
+                                                </option>
+                                            </select>
+                                        </td>
+
+                                        <!-- Break -->
+                                        <td>Break</td>
+
+                                        <!-- 3rd Period -->
+                                        <td>
+                                            <select class="attendance"
+                                                    data-student-id="<?php echo $student['student_id']; ?>"
+                                                    data-period="3"
+                                                    data-student-name="<?php echo htmlspecialchars($student['first_name'] . " " . $student['last_name']); ?>"
+                                                    style="background-color: <?php echo ($student_attendance['period_3'] === 'Present') ? 'green' : (($student_attendance['period_3'] === 'Absent') ? 'red' : 'gray'); ?>; color: white;">
+                                                <option value="Not Set" <?php echo ($student_attendance['period_3'] === 'Not Set') ? 'selected' : ''; ?>>
+                                                    Not Set
+                                                </option>
+                                                <option value="Present" <?php echo ($student_attendance['period_3'] === 'Present') ? 'selected' : ''; ?>>
+                                                    Present
+                                                </option>
+                                                <option value="Absent" <?php echo ($student_attendance['period_3'] === 'Absent') ? 'selected' : ''; ?>>
+                                                    Absent
+                                                </option>
+                                            </select>
+                                        </td>
+
+                                        <!-- Lunch -->
+                                        <td>Lunch</td>
+
+                                        <!-- 4th Period -->
+                                        <td>
+                                            <select class="attendance"
+                                                    data-student-id="<?php echo $student['student_id']; ?>"
+                                                    data-period="4"
+                                                    data-student-name="<?php echo htmlspecialchars($student['first_name'] . " " . $student['last_name']); ?>"
+                                                    style="background-color: <?php echo ($student_attendance['period_4'] === 'Present') ? 'green' : (($student_attendance['period_4'] === 'Absent') ? 'red' : 'gray'); ?>; color: white;">
+                                                <option value="Not Set" <?php echo ($student_attendance['period_4'] === 'Not Set') ? 'selected' : ''; ?>>
+                                                    Not Set
+                                                </option>
+                                                <option value="Present" <?php echo ($student_attendance['period_4'] === 'Present') ? 'selected' : ''; ?>>
+                                                    Present
+                                                </option>
+                                                <option value="Absent" <?php echo ($student_attendance['period_4'] === 'Absent') ? 'selected' : ''; ?>>
+                                                    Absent
+                                                </option>
+                                            </select>
+                                        </td>
+
+                                        <!-- 5th Period -->
+                                        <td>
+                                            <div class="select-wrapper">
+                                                <select class="attendance"
+                                                        data-student-id="<?php echo $student['student_id']; ?>"
+                                                        data-period="5"
+                                                        data-student-name="<?php echo htmlspecialchars($student['first_name'] . " " . $student['last_name']); ?>"
+                                                        style="background-color: <?php echo ($student_attendance['period_5'] === 'Present') ? 'green' : (($student_attendance['period_5'] === 'Absent') ? 'red' : 'gray'); ?>; color: white;">
+                                                    <option value="Not Set" <?php echo ($student_attendance['period_5'] === 'Not Set') ? 'selected' : ''; ?>>
+                                                        Not Set
+                                                    </option>
+                                                    <option value="Present" <?php echo ($student_attendance['period_5'] === 'Present') ? 'selected' : ''; ?>>
+                                                        Present
+                                                    </option>
+                                                    <option value="Absent" <?php echo ($student_attendance['period_5'] === 'Absent') ? 'selected' : ''; ?>>
+                                                        Absent
+                                                    </option>
+                                                </select>
+                                            </div>
+
+                                        </td>
+                                    </tr>
+                                <?php } ?>
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <?php
+                    }
+                    ?>
                 </div>
+
 
                 <div class="display-content-box" id="leave-approve">
                     <h2>Approve Leave Request</h2>
