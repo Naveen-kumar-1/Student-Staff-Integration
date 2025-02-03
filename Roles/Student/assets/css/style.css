@@ -920,12 +920,18 @@ button:hover {
 
 }
 
+.input-fields input:focus,
+.input-fields textarea:focus {
+    border: 1px solid #4CAF50;
+}
+
 .input-fields input,
 .input-fields textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    font-family: "poppins";
     font-size: 16px;
 }
 
@@ -966,10 +972,11 @@ button:hover {
 }
 
 .container {
+    font-family: "poppins";
+    font-size: 17px;
     overflow: hidden;
     overflow-x: auto;
-    max-width: 900px;
-    margin: auto;
+    width: 100%;
     background: white;
     padding: 20px;
     border-radius: 8px;
@@ -1166,7 +1173,7 @@ th {
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 14px;
-
+    font-family: "Poppins", sans-serif;
     transition: border-color 0.3s ease-in-out;
 }
 
@@ -1366,6 +1373,7 @@ th {
     padding: 10px;
     margin-bottom: 15px;
     border: 1px solid #ddd;
+    outline: #4CAF50;
     border-radius: 5px;
 }
 

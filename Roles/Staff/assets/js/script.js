@@ -792,3 +792,39 @@ function saveAttendance(classId) {
 
 // Function to update the current date and time
 
+function selectOption(option) {
+    const selectBox = option.closest('.custom-select').querySelector('.selected-option');
+    selectBox.innerHTML = option.innerHTML; // Update selected value
+    selectBox.setAttribute('data-value', option.getAttribute('data-value')); // Store selected status
+}
+
+function saveLeaveStatus(button) {
+    const approveBox = button.closest('.approve-leave-box');
+    const leaveId = approveBox.getAttribute('data-id'); // Make sure you add `data-id` in your PHP
+    const newStatus = approveBox.querySelector('.selected-option').getAttribute('data-value');
+
+    if (!leaveId || !newStatus) {
+        alert('Error: Missing leave request ID or status.');
+        return;
+    }
+
+    // AJAX request
+    fetch('update_leave_status.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `id=${leaveId}&status=${newStatus}`
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Leave status updated successfully!');
+                location.reload(); // Refresh to reflect changes
+            } else {
+                alert('Failed to update leave status.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating leave status.');
+        });
+}

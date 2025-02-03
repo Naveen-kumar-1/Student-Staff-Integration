@@ -46,7 +46,6 @@ function getSiteUrl()
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/css/style.css"/>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <script src="assets/js/script.js"></script>
     <title>Student</title>
 </head>
 <body>
@@ -74,9 +73,11 @@ function getSiteUrl()
                 <ul class="nav-links">
                     <li class="nav-link" onclick="showContent('basic-student-info')">Basic Info</li>
                     <li class="nav-link" onclick="showContent('assignment')">Assignment<span
-                                id="assignment-notification" class="notification-badge" style="display: none"></span></li>
+                                id="assignment-notification" class="notification-badge" style="display: none"></span>
+                    </li>
                     <li class="nav-link" onclick="showContent('notice')">Notice<span id="notice-notification"
-                                                                                     class="notification-badge" style="display: none">0</span>
+                                                                                     class="notification-badge"
+                                                                                     style="display: none">0</span>
                     </li>
                     <li class="nav-link" onclick="showContent('attendance')">Attendance</li>
                     <li class="nav-link" onclick="showContent('apply-leave')">Apply Leave
@@ -87,48 +88,50 @@ function getSiteUrl()
 
         <!-- Content for each section -->
         <div class="display-content-box" id="basic-student-info" style="display: block;">
-       <?php
-       if(file_exists('Pages/basicStudentInfo.php')){
-           include 'Pages/basicStudentInfo.php';
-       }else{
-           echo "Basic Info not found.";
-       }
-       ?>
+            <?php
+            if (file_exists('Pages/basicStudentInfo.php')) {
+                include 'Pages/basicStudentInfo.php';
+            } else {
+                echo "Basic Info not found.";
+            }
+            ?>
         </div>
 
         <div class="display-content-box" id="assignment" style="display: none;">
-                <?php
-                if(file_exists('Pages/Assignment.php')){
-                    include 'Pages/Assignment.php';
-                }else{
-                    echo "Assignment snot found.";
-                }
-                ?>
-            </div>
+            <?php
+            if (file_exists('Pages/Assignment.php')) {
+                include 'Pages/Assignment.php';
+            } else {
+                echo "Assignment snot found.";
+            }
+            ?>
+        </div>
 
 
         <div class="display-content-box" id="notice" style="display: none;">
             <?php
-            if(file_exists('Pages/Notice.php')){
-            include 'Pages/Notice.php';
-            }else{
+            if (file_exists('Pages/Notice.php')) {
+                include 'Pages/Notice.php';
+            } else {
                 echo "Notice not found.";
             }
             ?>
         </div>
 
 
-
-
         <div class="display-content-box" id="apply-leave" style="display: none;">
 
 
-<?php if(file_exists('Pages/LeaveApply.php')){include 'Pages/LeaveApply.php';}else{echo "Leave not found";} ?>
+            <?php if (file_exists('Pages/LeaveApply.php')) {
+                include 'Pages/LeaveApply.php';
+            } else {
+                echo "Leave not found";
+            } ?>
 
         </div>
 
 
-</div>
+    </div>
 </div>
 </div>
 <?php $conn->close(); ?>
@@ -146,6 +149,7 @@ function getSiteUrl()
     }
 
 </script>
+<script src="assets/js/script.js"></script>
 
 </body>
 </html>

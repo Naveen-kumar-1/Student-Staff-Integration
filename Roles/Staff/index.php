@@ -665,9 +665,6 @@ function getSiteUrl()
                         <li class="class-link declined" onclick="openLeaveStatus('declined')">
                             <i class='bx bxs-x-circle'></i> Declined
                         </li>
-                        <li class="class-link trash" onclick="openLeaveStatus('trash')">
-                            <i class='bx bxs-trash'></i> Trash
-                        </li>
                     </ul>
 
                     <!-- Request boxes for each status -->
@@ -708,7 +705,6 @@ function getSiteUrl()
                     <div class="request-box" id="pending" style="display: none;">Display if pending</div>
                     <div class="request-box" id="approved" style="display: none;">Display if approved</div>
                     <div class="request-box" id="declined" style="display: none;">Display if declined</div>
-                    <div class="request-box" id="trash" style="display: none;">Display Trash</div>
                 </div>
 
 

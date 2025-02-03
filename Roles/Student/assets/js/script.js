@@ -14,19 +14,6 @@ function showContent(contentId) {
 }
 
 
-function updateAssignmentNotification(count) {
-    const notificationBadge = document.getElementById('assignment-notification');
-
-    if (count > 0) {
-        notificationBadge.textContent = count;
-        notificationBadge.style.display = 'inline-block'; // Make sure it's visible if count > 0
-    } else {
-        notificationBadge.textContent = '0';  // Optional: Set to 0 to show a badge with zero
-        notificationBadge.style.display = 'inline-block'; // Show the badge even if count is zero
-    }
-}
-
-
 document.addEventListener('DOMContentLoaded', function () {
     const submitBtns = document.querySelectorAll('.submit-btn');
 
@@ -227,9 +214,9 @@ document.getElementById('applyLeaveForm').addEventListener('submit', function (e
                 document.getElementById('applyLeaveForm').reset(); // Reset the form
                 document.getElementById('leavePopup').style.display = 'none'; // Hide popup
                 setTimeout(function () {
-                    if (data.redirect) {
-                        location.reload(); // Reload the page to reflect the changes
-                    }
+
+                    location.reload(); // Reload the page to reflect the changes
+
                 }, 3000);
 
             } else {
