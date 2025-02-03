@@ -509,7 +509,7 @@ function getSiteUrl()
                             <button class="save-button"
                                     onclick="saveAttendance('<?php echo htmlspecialchars($class); ?>')">Save
                             </button>
-                            <table border="1" width="100%" cellpadding="5">
+                            <table width="100%" cellpadding="5">
                                 <thead>
                                 <tr>
                                     <th>Student Name</th>

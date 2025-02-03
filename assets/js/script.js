@@ -508,11 +508,11 @@ function submitSignUp() {
                     if (response.success) {
                         showToast("Sign-up successful!");
 
-                        if (redirect) {
+
                             setTimeout(() => {
                                 window.location.reload();
-                            }, 3000); // 3000 milliseconds = 3 seconds
-                        }
+                            }, 3000);
+
 
                     } else {
                         showToast(response.message);
