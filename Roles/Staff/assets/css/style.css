@@ -1423,3 +1423,218 @@ canvas {
     border-radius: 10px;
 }
 
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.popup-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 300px;
+}
+
+.popup-actions {
+    margin-top: 15px;
+}
+
+.popup-actions button {
+    padding: 8px 15px;
+    border: none;
+    cursor: pointer;
+}
+
+.confirm-btn {
+    background: red;
+    color: white;
+}
+
+.cancel-btn {
+    background: gray;
+    color: white;
+    margin-left: 10px;
+}
+
+.delete-all-leave-req {
+    background: crimson;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 75px;
+    transition: .3s;
+}
+
+.delete-all-leave-req:hover {
+    box-shadow: 6px 8px 1px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px); /* Move the button slightly upwards */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth transition */
+}
+
+/* Default styles for larger screens */
+.approve-leave-box {
+    width: 100%;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.approve-leave-box p {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+.custom-select {
+    width: 100%;
+    position: relative;
+    margin-top: 10px;
+}
+
+.select-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+    background-color: #f4f4f4;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.options-container {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    z-index: 10;
+}
+
+.option {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.option:hover {
+    background-color: #f1f1f1;
+}
+
+.save-status-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.save-status-btn:hover {
+    background-color: #45a049;
+}
+
+.status-icon {
+    margin-right: 10px;
+}
+
+.selected-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+}
+
+/* Mobile screen styles */
+@media (max-width: 768px) {
+    .approve-leave-box {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+
+    .approve-leave-actions {
+        position: relative;
+    }
+
+    .approve-leave-box p {
+        font-size: 14px; /* Reduce font size for mobile screens */
+    }
+
+    .custom-select {
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .select-box {
+        padding: 8px;
+        font-size: 14px; /* Adjust font size for smaller screens */
+    }
+
+    .options-container {
+        width: 100%;
+        padding: 5px 0;
+        box-shadow: none;
+    }
+
+    .option {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .save-status-btn {
+        width: 100%; /* Make button full-width */
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    .status-icon {
+        font-size: 18px; /* Reduce icon size for mobile */
+    }
+
+    /* Adjust the appearance of the delete button */
+    .delete-all-leave-req {
+        font-size: 16px;
+        padding: 10px 20px;
+        margin-top: 10px;
+        width: 100%; /* Make button full-width */
+    }
+}
+
+/* Very small mobile screens (e.g., portrait mobile) */
+@media (max-width: 480px) {
+    .approve-leave-box p {
+        font-size: 12px; /* Further reduce font size for small screens */
+    }
+
+    .save-status-btn {
+        font-size: 14px; /* Adjust font size of the button */
+    }
+
+    .select-box {
+        padding: 6px;
+    }
+
+    .option {
+        font-size: 12px; /* Adjust font size of options */
+    }
+
+    .delete-all-leave-req {
+        font-size: 14px; /* Adjust font size for the delete button */
+        padding: 8px 15px; /* Adjust padding */
+    }
+}

@@ -449,12 +449,6 @@ function openClass(className) {
     }
 }
 
-function updateLeaveNotification(count) {
-    const notificationBadge = document.getElementById('leave-notification');
-    notificationBadge.textContent = count;
-}
-
-updateLeaveNotification(20);
 
 // Function to handle tab switching
 function openLeaveStatus(status) {
@@ -493,29 +487,6 @@ function changeLeaveStatus(dropdown) {
     }
 }
 
-function saveLeaveStatus(button) {
-    const dropdown = button.previousElementSibling; // Get the dropdown element
-    const selectedStatus = dropdown.value;
-    const parentBox = button.closest('.approve-leave-box');
-    const statusText = parentBox.querySelector('p:nth-of-type(4)');
-    const statusIcon = statusText.querySelector('.status-icon');
-
-    // Update the status text and icon based on selected value
-    switch (selectedStatus) {
-        case 'approved':
-            statusText.innerHTML = `Status: Approved <i class="status-icon bx bxs-check-circle"></i>`;
-            break;
-        case 'declined':
-            statusText.innerHTML = `Status: Declined <i class="status-icon bx bxs-x-circle"></i>`;
-            break;
-        case 'trash':
-            statusText.innerHTML = `Status: Trash <i class="status-icon bx bxs-trash"></i>`;
-            break;
-    }
-
-    // Optionally, you can trigger a save action (e.g., sending data to a server)
-    alert('Status updated to: ' + selectedStatus);
-}
 
 function toggleDropdown(selectElement) {
     const dropdown = selectElement.nextElementSibling;
@@ -800,16 +771,15 @@ function selectOption(option) {
 
 function saveLeaveStatus(button) {
     const approveBox = button.closest('.approve-leave-box');
-    const leaveId = approveBox.getAttribute('data-id'); // Make sure you add `data-id` in your PHP
+    const leaveId = approveBox.getAttribute('data-id'); // Get the leave request ID
     const newStatus = approveBox.querySelector('.selected-option').getAttribute('data-value');
-
     if (!leaveId || !newStatus) {
         alert('Error: Missing leave request ID or status.');
         return;
     }
 
     // AJAX request
-    fetch('update_leave_status.php', {
+    fetch('actions/Leave/updateLeaveStatus.php', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: `id=${leaveId}&status=${newStatus}`
@@ -817,14 +787,17 @@ function saveLeaveStatus(button) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Leave status updated successfully!');
-                location.reload(); // Refresh to reflect changes
+                showToast('Leave status updated successfully!', 'success');
+                setTimeout(function () {
+                    location.reload();
+                }, 3000);
             } else {
-                alert('Failed to update leave status.');
+                showToast('Failed to update leave status.', 'error');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while updating leave status.');
+            showToast('An error occurred while updating leave status.', 'error');
         });
 }
+

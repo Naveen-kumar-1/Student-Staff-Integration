@@ -157,7 +157,21 @@ function showSignupForm() {
             <label for="phone">Phone:</label>
             <input type="text" id="phone" placeholder="Enter Phone Number" class="input-field">
             <div class="error-message" id="phone-error" style="display: none;">Please enter a valid phone number</div>
-
+ <label for="staff-class"> Class Adviser of:</label>
+    <select id="staff-class" name="staff-class" class="input-field">
+        <option value="not-applicable">Not any class</option>
+        <optgroup label="Undergraduate">
+            <option value="first-ug">UG - First Year</option>
+            <option value="second-ug">UG - Second Year</option>
+            <option value="third-ug">UG - Third Year</option>
+        </optgroup>
+        <optgroup label="Postgraduate">
+            <option value="first-pg">PG - First Year</option>
+            <option value="second-pg">PG - Second Year</option>
+        </optgroup>
+    </select>
+    <p style="font-size: 14px; color: #4A607A">Select if you are any class's adviser</p>
+     <div class="error-message" id="class-error" style="display: none;">Please enter a valid email address</div>
             <label for="email">Email:</label>
             <input type="email" id="email" placeholder="Enter Email Address" class="input-field">
             <div class="error-message" id="email-error" style="display: none;">Please enter a valid email address</div>
@@ -465,6 +479,7 @@ function submitSignUp() {
             {id: 'adhaar', errorId: 'adhaar-error', errorMessage: 'Invalid Aadhaar number.'},
             {id: 'phone', errorId: 'phone-error', errorMessage: 'Invalid phone number.'},
             {id: 'email', errorId: 'email-error', errorMessage: 'Invalid email address.'},
+            {id: 'staff-class', errorId: 'class-error', errorMessage: 'Please select any class or N/A'},
             {
                 id: 'staff-pass',
                 errorId: 'staff-pass-error',
@@ -485,6 +500,7 @@ function submitSignUp() {
             const staffId = document.getElementById('staff-id').value;
             const position = document.getElementById('position').value;
             const address = document.getElementById('address').value;
+            const classAdviser = document.getElementById('staff-class').value;
             const xhr = new XMLHttpRequest();
             const formData = new FormData();
             formData.append("role", "staff");
@@ -499,6 +515,7 @@ function submitSignUp() {
             formData.append("position", position);
             formData.append("password", staffPass);
             formData.append("staff_id", staffId);
+            formData.append("staff_class", classAdviser);
             formData.append("image_url", imageFile);  // Send image file
 
             xhr.open("POST", "Roles/Staff/actions/signup/signup.php", true);
@@ -509,9 +526,9 @@ function submitSignUp() {
                         showToast("Sign-up successful!");
 
 
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 3000);
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 3000);
 
 
                     } else {

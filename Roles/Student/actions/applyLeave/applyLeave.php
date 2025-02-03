@@ -1,10 +1,10 @@
 <?php
-header('Content-Type: application/json'); // JSON response
+header('Content-Type: application/json'); // Set response type to JSON
 
 // Database connection
 $host = "localhost";
-$user = "root";  // Change if needed
-$pass = "";      // Change if needed
+$user = "root";
+$pass = "";
 $dbname = "student_staff_integration";
 
 $conn = new mysqli($host, $user, $pass, $dbname);
@@ -14,7 +14,7 @@ if ($conn->connect_error) {
     die(json_encode(['success' => false, 'message' => 'Database connection failed']));
 }
 
-// Create table if it doesn't exist (includes status column)
+// Ensure leave_requests table exists
 $tableQuery = "CREATE TABLE IF NOT EXISTS leave_requests (
     id INT AUTO_INCREMENT PRIMARY KEY,
     student_name VARCHAR(100) NOT NULL,
@@ -22,6 +22,7 @@ $tableQuery = "CREATE TABLE IF NOT EXISTS leave_requests (
     student_class VARCHAR(50) NOT NULL,
     leave_date DATE NOT NULL,
     leave_reason TEXT NOT NULL,
+    staff_id VARCHAR(50) NOT NULL,
     status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
     applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
@@ -36,14 +37,28 @@ $leave_date = $_POST['leave_date'] ?? '';
 $leave_reason = $_POST['leave_reason'] ?? '';
 
 // Validate inputs
+if (empty($student_name) || empty($student_id) || empty($student_class) || empty($leave_date) || empty($leave_reason)) {
+    echo json_encode(['success' => false, 'message' => 'All fields are required']);
+    exit;
+}
 
+// **Find the staff responsible for the class**
+$staffQuery = "SELECT staff_id FROM staffs WHERE class_adviser = ?";
+$stmt = $conn->prepare($staffQuery);
+$stmt->bind_param("s", $student_class);
+$stmt->execute();
+$result = $stmt->get_result();
+$staff = $result->fetch_assoc();
 
-// **Update Request**
+if (!$staff) {
+    echo json_encode(['success' => false, 'message' => 'No class adviser found for this class']);
+    exit;
+}
+
+$staff_id = $staff['staff_id']; // Get the responsible staff ID
+
+// **UPDATE REQUEST (If ID is provided)**
 if (!empty($id)) {
-    if (empty($leave_date) || empty($leave_reason)) {
-        echo json_encode(['success' => false, 'message' => 'All fields are required']);
-        exit;
-    }
     // Check if the leave request exists and is still "Pending"
     $checkQuery = "SELECT status FROM leave_requests WHERE id = ?";
     $stmt = $conn->prepare($checkQuery);
@@ -63,23 +78,20 @@ if (!empty($id)) {
     }
 
     // Update the leave request
-    $updateQuery = "UPDATE leave_requests SET leave_date = ?, leave_reason = ? WHERE id = ?";
+    $updateQuery = "UPDATE leave_requests SET leave_date = ?, leave_reason = ?, staff_id = ? WHERE id = ?";
     $stmt = $conn->prepare($updateQuery);
-    $stmt->bind_param("ssi", $leave_date, $leave_reason, $id);
+    $stmt->bind_param("sssi", $leave_date, $leave_reason, $staff_id, $id);
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Leave request updated successfully!']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Failed to update leave request']);
     }
-} // **Insert Request**
-else {
-    if (empty($student_name) || empty($student_id) || empty($student_class) || empty($leave_date) || empty($leave_reason)) {
-        echo json_encode(['success' => false, 'message' => 'All fields are required']);
-        exit;
-    }
-    $stmt = $conn->prepare("INSERT INTO leave_requests (student_name, student_id, student_class, leave_date, leave_reason, status) VALUES (?, ?, ?, ?, ?, 'Pending')");
-    $stmt->bind_param("sssss", $student_name, $student_id, $student_class, $leave_date, $leave_reason);
+} else {
+    // **INSERT NEW LEAVE REQUEST**
+    $stmt = $conn->prepare("INSERT INTO leave_requests (student_name, student_id, student_class, leave_date, leave_reason, staff_id, status) 
+                            VALUES (?, ?, ?, ?, ?, ?, 'Pending')");
+    $stmt->bind_param("ssssss", $student_name, $student_id, $student_class, $leave_date, $leave_reason, $staff_id);
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Leave request submitted successfully!']);
