@@ -14,15 +14,6 @@ function showContent(contentId) {
 }
 
 
-function updateLeaveNotification(count) {
-    const notificationBadge = document.getElementById('leave-notification');
-    notificationBadge.textContent = count;
-}
-
-updateLeaveNotification(20);
-
-
-
 function updateAssignmentNotification(count) {
     const notificationBadge = document.getElementById('assignment-notification');
 
@@ -140,7 +131,7 @@ function showToast(message, type) {
 }
 
 
-    document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
     // Get modal elements
     const modal = document.getElementById("notice-modal");
     const closeModal = document.querySelector(".close");
@@ -150,32 +141,182 @@ function showToast(message, type) {
 
     // Handle View button clicks
     document.querySelectorAll(".view-btn").forEach(button => {
-    button.addEventListener("click", () => {
-    // Fetch data attributes
-    const title = button.getAttribute("data-title");
-    const details = button.getAttribute("data-details");
-    const date = button.getAttribute("data-date");
+        button.addEventListener("click", () => {
+            // Fetch data attributes
+            const title = button.getAttribute("data-title");
+            const details = button.getAttribute("data-details");
+            const date = button.getAttribute("data-date");
 
-    // Populate modal
-    noticeTitle.textContent = title;
-    noticeDetails.textContent = details;
-    noticeDate.textContent = date;
+            // Populate modal
+            noticeTitle.textContent = title;
+            noticeDetails.textContent = details;
+            noticeDate.textContent = date;
 
-    // Show modal
-    modal.style.display = "block";
-});
-});
+            // Show modal
+            modal.style.display = "block";
+        });
+    });
 
     // Close modal when 'X' is clicked
     closeModal.addEventListener("click", () => {
-    modal.style.display = "none";
-});
+        modal.style.display = "none";
+    });
 
     // Close modal when clicking outside the content
     window.addEventListener("click", (e) => {
-    if (e.target === modal) {
-    modal.style.display = "none";
-}
-});
+        if (e.target === modal) {
+            modal.style.display = "none";
+        }
+    });
 });
 
+// Get elements
+const applyLeaveBtn = document.getElementById('applyLeave');
+const leavePopup = document.getElementById('leavePopup');
+const closeBtn = document.querySelector('.close-btn');
+
+// Show popup when button is clicked
+applyLeaveBtn.addEventListener('click', () => {
+    leavePopup.style.display = 'flex';
+});
+
+// Hide popup when close button is clicked
+closeBtn.addEventListener('click', () => {
+    leavePopup.style.display = 'none';
+});
+
+// Hide popup when clicking outside the form
+window.addEventListener('click', (event) => {
+    if (event.target === leavePopup) {
+        leavePopup.style.display = 'none';
+    }
+});
+document.getElementById('applyLeaveForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent default form submission
+
+    // Get form values
+    let studentName = document.getElementById('student-name').value;
+    let studentId = document.getElementById('student-id').value;
+    let studentClass = document.getElementById('student-class').value;
+    let leaveDate = document.getElementById('leave-date').value;
+    let leaveReason = document.getElementById('leave-reason').value;
+
+    // Validate form inputs
+    if (leaveDate === "" || leaveReason.trim() === "") {
+        showToast("Please fill in all required fields.", 'error');
+        return;
+    }
+
+    // Prepare data for AJAX request
+    let formData = new FormData();
+    formData.append('student_name', studentName);
+    formData.append('student_id', studentId);
+    formData.append('student_class', studentClass);
+    formData.append('leave_date', leaveDate);
+    formData.append('leave_reason', leaveReason);
+
+    // Send data to PHP using Fetch API
+    fetch('actions/applyLeave/applyLeave.php', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast("Leave Applied Successfully!", "success");
+                document.getElementById('applyLeaveForm').reset(); // Reset the form
+                document.getElementById('leavePopup').style.display = 'none'; // Hide popup
+                setTimeout(function () {
+                    if (data.redirect) {
+                        location.reload(); // Reload the page to reflect the changes
+                    }
+                }, 3000);
+
+            } else {
+                showToast("Error: " + data.message, 'error');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+});
+
+// Show custom confirmation popup
+function confirmDelete(id) {
+    document.getElementById("delete-id").value = id; // Store ID in hidden input
+    document.getElementById("confirmPopup").style.display = "flex"; // Show popup
+}
+
+// Cancel delete
+document.getElementById("confirmNo").addEventListener("click", function () {
+    document.getElementById("confirmPopup").style.display = "none"; // Hide popup
+});
+
+// Confirm delete and make AJAX request
+document.getElementById("confirmYes").addEventListener("click", function () {
+    let id = document.getElementById("delete-id").value;
+
+    fetch("actions/applyLeave/deleteLeave.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: "id=" + id
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast("Leave request deleted successfully!", 'success');
+                location.reload(); // Refresh page
+            } else {
+                showToast("Error: " + data.message, 'error');
+            }
+            document.getElementById("confirmPopup").style.display = "none"; // Hide popup
+        })
+        .catch(error => console.error("Error:", error));
+});
+
+// Show edit popup with data
+function editLeaveRequest(id) {
+    fetch(`actions/applyLeave/getLeaveRequest.php?id=${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById("edit-id").value = data.leave.id;
+                document.getElementById("edit-student-name").value = data.leave.student_name;
+                document.getElementById("edit-student-id").value = data.leave.student_id;
+                document.getElementById("edit-student-class").value = data.leave.student_class;
+                document.getElementById("edit-leave-date").value = data.leave.leave_date;
+                document.getElementById("edit-leave-reason").value = data.leave.leave_reason;
+                document.getElementById("editPopup").style.display = "flex";
+                showToast('Leave Deleted Successfully', 'success');
+            } else {
+                showToast("Error fetching leave request!", "error");
+            }
+        });
+}
+
+// Close edit popup
+document.getElementById("closeEditPopup").addEventListener("click", function () {
+    document.getElementById("editPopup").style.display = "none";
+});
+
+// Submit edited data
+document.getElementById("editLeaveForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    let formData = new FormData();
+    formData.append("id", document.getElementById("edit-id").value);
+    formData.append("leave_date", document.getElementById("edit-leave-date").value);
+    formData.append("leave_reason", document.getElementById("edit-leave-reason").value);
+
+    fetch("actions/applyLeave/applyLeave.php", {
+        method: "POST",
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast("Leave updated successfully!", 'success');
+                location.reload();
+            } else {
+                showToast("Error: " + data.message, 'error');
+            }
+        });
+});
