@@ -1,6 +1,5 @@
 <?php
 header('Content-Type: application/json'); // Set response type to JSON
-
 // Database connection
 $host = "localhost";
 $user = "root";
@@ -35,13 +34,11 @@ $student_id = $_POST['student_id'] ?? '';
 $student_class = $_POST['student_class'] ?? '';
 $leave_date = $_POST['leave_date'] ?? '';
 $leave_reason = $_POST['leave_reason'] ?? '';
-
 // Validate inputs
 if (empty($student_name) || empty($student_id) || empty($student_class) || empty($leave_date) || empty($leave_reason)) {
     echo json_encode(['success' => false, 'message' => 'All fields are required']);
     exit;
 }
-
 // **Find the staff responsible for the class**
 $staffQuery = "SELECT staff_id FROM staffs WHERE class_adviser = ?";
 $stmt = $conn->prepare($staffQuery);

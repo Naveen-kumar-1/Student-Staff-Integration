@@ -801,3 +801,69 @@ function saveLeaveStatus(button) {
         });
 }
 
+
+// Function to show the leave details in a popup
+function showLeaveDetails(element) {
+    var studentId = element.getAttribute('data-student-id');
+    var studentName = element.getAttribute('data-student-name');
+
+    // Create the request to fetch the leave details for the specific student
+    var request = new XMLHttpRequest();
+    request.open('POST', 'actions/Leave/getLeave.php', true);
+    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+    // Send the student_id to fetch leave details for the student
+    request.send('student_id=' + studentId);
+
+    // Handle the response when the request is successful
+    request.onload = function() {
+        if (request.status === 200) {
+            var response = JSON.parse(request.responseText);
+
+            if (response.success) {
+                // Create the popup content
+                var leaveDetails = response.leave_details;
+                var leavePopupContent = `
+                    <h3>Leave Details for ${studentName}</h3>
+                    <p><strong>Leave Date:</strong> ${leaveDetails.leave_date}</p>
+                    <p><strong>Reason:</strong> ${leaveDetails.leave_reason}</p>
+                    <p><strong>Status:</strong> ${leaveDetails.status}</p>
+                `;
+
+                // Open the popup
+                openPopup(leavePopupContent);
+            } else {
+                showToast('No leave details found for this student.','error');
+            }
+        } else {
+            showToast('Failed to fetch leave details.','error');
+        }
+    };
+}
+
+// Function to open the popup
+function openPopup(content) {
+    // Create the overlay
+    var overlay = document.createElement('div');
+    overlay.className = 'popup-overlay';
+
+    // Create the popup box
+    var popupBox = document.createElement('div');
+    popupBox.className = 'popup-box';
+
+    // Close button for the popup
+    var closeButton = document.createElement('button');
+    closeButton.className = 'close-popup';
+    closeButton.textContent = 'Close';
+    closeButton.onclick = function() {
+        document.body.removeChild(overlay);
+    };
+
+    // Append the content and close button to the popup
+    popupBox.innerHTML = content;
+    popupBox.appendChild(closeButton);
+
+    // Append the overlay and popup to the body
+    overlay.appendChild(popupBox);
+    document.body.appendChild(overlay);
+}

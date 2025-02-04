@@ -694,14 +694,7 @@ button:disabled {
     color: #333;
 }
 
-/* Position the dropdown and save button at the top-right corner */
-.approve-leave-actions {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    align-items: center;
-}
+
 
 /* Styling the dropdown */
 .status-dropdown {
@@ -725,8 +718,9 @@ button:disabled {
 /* Save button with save icon, smaller size */
 .save-status-btn {
     margin-top: 0;
-    width: 35px;
-    height: 40px;
+    width: 40px;
+    height: 36px;
+    margin-top: 6px;
     display: inline-flex;
     align-items: center;
     background-color: #007bff;
@@ -908,6 +902,8 @@ h2 {
 
 .approve-leave-actions {
     display: flex;
+
+    align-items: center;
     gap: 10px;
     margin-top: 10px;
 }
@@ -968,7 +964,7 @@ h2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 1px;
     background-color: #f9f9f9;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -1500,16 +1496,6 @@ canvas {
     margin-top: 10px;
 }
 
-.select-box {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px;
-    background-color: #f4f4f4;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-}
 
 .options-container {
     display: none;
@@ -1533,20 +1519,7 @@ canvas {
     background-color: #f1f1f1;
 }
 
-.save-status-btn {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
 
-.save-status-btn:hover {
-    background-color: #45a049;
-}
 
 .status-icon {
     margin-right: 10px;
@@ -1637,4 +1610,52 @@ canvas {
         font-size: 14px; /* Adjust font size for the delete button */
         padding: 8px 15px; /* Adjust padding */
     }
+}
+/* Popup Overlay */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Popup Box */
+.popup-box {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    width: 300px;
+    max-width: 90%;
+}
+
+/* Close Button */
+.close-popup {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.close-popup:hover {
+    background-color: darkred;
+}
+.leave-approved-text{
+    padding: 1px 50px;
+    cursor: pointer;
+    transition: .3s;
+    border-radius: 6px;
+}
+.leave-approved-text:hover{
+    background: seagreen;
+    color: #fff;
 }
