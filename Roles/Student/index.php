@@ -89,8 +89,8 @@ function getSiteUrl()
         <!-- Content for each section -->
         <div class="display-content-box" id="basic-student-info" style="display: block;">
             <?php
-            if (file_exists('Pages/basicStudentInfo.php')) {
-                include 'Pages/basicStudentInfo.php';
+            if (file_exists('pages/basicStudentInfo.php')) {
+                include 'pages/basicStudentInfo.php';
             } else {
                 echo "Basic Info not found.";
             }
@@ -99,8 +99,8 @@ function getSiteUrl()
 
         <div class="display-content-box" id="assignment" style="display: none;">
             <?php
-            if (file_exists('Pages/Assignment.php')) {
-                include 'Pages/Assignment.php';
+            if (file_exists('pages/Assignment.php')) {
+                include 'pages/Assignment.php';
             } else {
                 echo "Assignment snot found.";
             }
@@ -110,8 +110,8 @@ function getSiteUrl()
 
         <div class="display-content-box" id="notice" style="display: none;">
             <?php
-            if (file_exists('Pages/Notice.php')) {
-                include 'Pages/Notice.php';
+            if (file_exists('pages/Notice.php')) {
+                include 'pages/Notice.php';
             } else {
                 echo "Notice not found.";
             }
@@ -122,8 +122,8 @@ function getSiteUrl()
         <div class="display-content-box" id="apply-leave" style="display: none;">
 
 
-            <?php if (file_exists('Pages/LeaveApply.php')) {
-                include 'Pages/LeaveApply.php';
+            <?php if (file_exists('pages/LeaveApply.php')) {
+                include 'pages/LeaveApply.php';
             } else {
                 echo "Leave not found";
             } ?>
