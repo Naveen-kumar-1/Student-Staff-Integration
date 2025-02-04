@@ -1,0 +1,282 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "poppins";
+}
+
+.student-staff-integration-admin {
+    width: 100%;
+    height: 100vh;
+    background-image: linear-gradient(rgba(0, 0, 50, 0.8), rgba(0, 0, 50, 0.8)), url(../../assets/images/admin-college.jpg);
+    background-position: center;
+    background-size: cover;
+    position: relative;
+    overflow: hidden;
+}
+
+.form-box {
+    width: 400px;
+    padding: 20px 10px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 1px 5px 10px rgba(0, 0, 0, 0.5);
+
+}
+
+.login-form-title {
+    text-align: center;
+    padding: 20px 0;
+    color: rgba(0, 0, 50, 0.8);
+    position: relative;
+}
+
+.input-fields {
+    width: 100%;
+    display: flex;
+    padding: 10px 40px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.input-box {
+    width: 100%;
+    background: #e3e3e3;
+    color: #333;
+    border-radius: 75px;
+    font-size: 16px;
+    padding: 10px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    margin: 0 8px;
+
+}
+
+.input-box .bx {
+    font-size: 22px;
+    padding-left: 15px;
+}
+
+.form-box input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: inherit;
+    outline: none;
+
+}
+
+.forgot-pass {
+    width: 100%;
+    font-family: 14px;
+    text-align: center;
+    margin: 10px 0;
+}
+
+.login-btn {
+    width: 100%;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-sumbit-btn {
+    border: 0;
+    outline: 0;
+    padding: 10px 40px;
+    border-radius: 75px;
+    background: rgba(0, 0, 50, 0.8);
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.login-sumbit-btn:hover {
+    background: seagreen;
+}
+
+.forgot-password {
+    display: none;
+}
+
+.password-bx {
+    cursor: pointer;
+}
+
+
+/*style for toast message*/
+
+.notification {
+    position: fixed;
+    top: 50px;
+    right: 20px;
+    z-index: 1;
+}
+
+.toast {
+    position: relative;
+
+    padding: 15px;
+    color: #ffffff;
+    margin-bottom: 10px;
+    width: 450px;
+    height: fit-content;
+    display: grid;
+    grid-template-columns: 70px 1fr 70px;
+    border-radius: 5px;
+    --color: #0abf30;
+    animation: show 0.3s ease 1 forwards;
+    background-image: linear-gradient(to right, #0abf30, #22243f 30%);
+
+
+}
+
+.toast i {
+    color: var(--color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+
+}
+
+.toast .toast-content .title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.toast .toast-msg {
+    font-size: 14px;
+    color: #fff;
+}
+
+.toast .toast-msg,
+.toast i:nth-child(3) {
+    opacity: 0.6;
+}
+
+@keyframes show {
+    0% {
+        transform: translateX(100%);
+    }
+    40% {
+        transform: translateX(-50%);
+    }
+    80% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-10%);
+    }
+}
+
+.toast::before {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    color: seagreen;
+    width: 100%;
+    height: 3px;
+    background: seagreen;
+    content: '';
+    animation: timeOut 5s linear 1 forwards;
+}
+
+@keyframes timeOut {
+    to {
+        width: 0;
+    }
+
+}
+
+.toast.error::before {
+    color: crimson;
+    background: crimson;
+}
+
+.toast.error .toast-msg {
+    color: #000 !important;
+}
+
+.toast.error {
+    --color: #f24d4c;
+    color: #000;
+    background: #ffffff;
+    padding: 15px;
+    right: 20px;
+
+}
+
+.toast.warning {
+    --color: #e9bd0c;
+    background-image: linear-gradient(
+            to right, #e9bd0c55, #22243F 30%
+    );
+
+}
+
+.toast.info {
+    --color: #3498db;
+    background-image: linear-gradient(
+            to right, #3498db88, #22243F 30%
+    );
+
+}
+
+/* Mobile screen styles */
+@media (max-width: 600px) {
+
+    .toast {
+        width: 90%; /* Adjust width for smaller screens */
+        height: auto; /* Let the height adjust dynamically based on content */
+        padding: 10px; /* Reduce padding for mobile screens */
+        grid-template-columns: 50px 1fr 50px; /* Adjust grid layout */
+        animation: showMobile 0.4s ease-out 1 forwards; /* Updated animation */
+        margin-left: 35px;
+    }
+
+    .toast i {
+        font-size: 24px; /* Decrease icon size for mobile */
+    }
+
+    .toast .toast-content .title {
+        font-size: 16px; /* Decrease title font size */
+    }
+
+    .toast .toast-msg {
+        font-size: 12px; /* Decrease message font size */
+    }
+
+    .notification {
+        top: 20px;
+        right: 10px;
+        left: 10px;
+    }
+}
+
+/* Modified animation for mobile */
+@keyframes showMobile {
+    0% {
+        transform: translateY(-100%); /* Slide down from top */
+        opacity: 0;
+    }
+    50% {
+        transform: translateY(0%);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(0%);
+        opacity: 1;
+    }
+}
