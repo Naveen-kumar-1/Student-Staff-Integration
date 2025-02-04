@@ -566,12 +566,12 @@ function showSubmittedStudentList(assignmentId) {
                 // Show the modal
                 document.getElementById('submittedStudentModal').style.display = 'block';
             } else {
-                alert('No students have submitted this assignment.');
+                showToast('No students have submitted this assignment.','error');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Failed to fetch student list.');
+            showToast('Failed to fetch student list.','error');
         });
 }
 
@@ -774,7 +774,7 @@ function saveLeaveStatus(button) {
     const leaveId = approveBox.getAttribute('data-id'); // Get the leave request ID
     const newStatus = approveBox.querySelector('.selected-option').getAttribute('data-value');
     if (!leaveId || !newStatus) {
-        alert('Error: Missing leave request ID or status.');
+        showToast('Error: Missing leave request ID or status.','error');
         return;
     }
 

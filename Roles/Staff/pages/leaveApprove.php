@@ -146,7 +146,7 @@ $conn->close();
             const staffId = "<?php echo $staff_id ?? ''; ?>"; // Replace with dynamic staff_id if needed
 
             if (!staffId) {
-                alert('Staff ID is missing.');
+                showToast('Staff ID is missing.','error');
                 return;
             }
 
