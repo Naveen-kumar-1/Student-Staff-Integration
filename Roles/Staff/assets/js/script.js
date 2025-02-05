@@ -120,8 +120,9 @@ function showAssignmentForm(formType, assignmentId = null) {
     // Show the assignment form
     document.querySelector('.assignment-form').style.display = 'block';
 }
-
 document.addEventListener('DOMContentLoaded', function () {
+    var submitButton = document.querySelector('#assignmentForm button[type="submit"]');
+
     document.getElementById('assignmentForm').addEventListener('submit', function (event) {
         event.preventDefault(); // Prevent default form submission
 
@@ -173,6 +174,10 @@ document.addEventListener('DOMContentLoaded', function () {
             return; // Stop submission if validation fails
         }
 
+        // Disable the submit button to prevent double click
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting...';
+
         // Determine the correct endpoint (save or update)
         var assignmentId = document.getElementById('assignment-id').value;
         var url = assignmentId
@@ -198,16 +203,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 setTimeout(function () {
                     location.reload();
-                }, 3000);
-                // Reload the page
-
+                }, 3000); // Reload the page after 3 seconds
             } else {
                 showToast('Error: ' + data.message, 'error');
             }
+
+            // Re-enable the submit button
+            submitButton.disabled = false;
+            submitButton.textContent = 'Submit';
         };
 
         xhr.onerror = function () {
             showToast('Error: An error occurred during the request.', 'error');
+
+            // Re-enable the submit button in case of an error
+            submitButton.disabled = false;
+            submitButton.textContent = 'Submit';
         };
 
         xhr.send(formData); // Send form data

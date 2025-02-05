@@ -24,7 +24,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
 			try {
 				// Correctly check if the class exists and send the email
 				if ( class_exists( '\SSIP\EmailHelper\sendEmail' ) ) {
-					$sendEmail = \SSIP\EmailHelper\sendEmail::sendEmail( $email );
+					$sendEmail = \SSIP\EmailHelper\sendEmail::sendEmail( $email,'otp' );
 
 					if ( $sendEmail ) {
 						echo json_encode( [

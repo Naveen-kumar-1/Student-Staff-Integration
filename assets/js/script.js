@@ -242,8 +242,8 @@ function togglePassword(inputId, toggleIconId) {
 
 // Regex patterns for validation
 const studentIdPattern = /^[0-9]{2}[A-Za-z]{3}[0-9]{4}$/;
-const staffIdPattern = /^[0-9]{9}$/;
-const passwordPattern = /^[A-Za-z0-9]{8}$/;
+const staffIdPattern = /^[A-Za-z0-9]{9}$/;
+const passwordPattern = /^[A-Za-z0-9]{8,}$/;
 
 function validateForm(fields) {
     let isValid = true;

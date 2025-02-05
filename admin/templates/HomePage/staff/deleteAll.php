@@ -1,9 +1,7 @@
 <?php
 session_start();
 
-if(!isset($_SESSION['logged_in'])){
-	header("location: ../../");
-}
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'deleteAllStaff') {
 	// Step 1: Connect to the database
@@ -29,8 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 		}
 	}
 
-	// Step 5: Delete all staff records from the database
-	$deleteQuery = "DELETE FROM staffs";
+	// Step 5: Disable foreign key checks and attempt to delete the table
+	mysqli_query($conn, "SET FOREIGN_KEY_CHECKS = 0");
+
+	$deleteQuery = "DROP TABLE IF EXISTS staffs";  // Add IF EXISTS for safety
 	if (mysqli_query($conn, $deleteQuery)) {
 		// Step 6: Check if the staff images directory is empty and remove it
 		$dirPath = $_SERVER['DOCUMENT_ROOT'] . '/Student-Staff-Integration/uploads/staff_images/';
@@ -41,20 +41,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 		}
 		$uploadsFolder = $_SERVER['DOCUMENT_ROOT'] . "/Student-Staff-Integration/uploads";
 
-// Check if the assignment folder exists and is empty
+		// Check if the assignment folder exists and is empty
 		if (is_dir($uploadsFolder)) {
-			$files = array_diff( scandir( $uploadsFolder ), [ '.', '..' ] ); // Exclude . and .. from the list
-			if ( empty( $files ) ) {
+			$files = array_diff(scandir($uploadsFolder), [ '.', '..' ]); // Exclude . and .. from the list
+			if (empty($files)) {
 				// Assignment folder is empty, delete it
-				rmdir( $uploadsFolder );
-
+				rmdir($uploadsFolder);
 			}
 		}
 		echo json_encode(['status' => 'success', 'message' => 'All staff records and images deleted successfully!']);
 	} else {
-		echo json_encode(['status' => 'error', 'message' => 'Failed to delete staff records!']);
+		// Capture and display any error
+		echo json_encode(['status' => 'error', 'message' => 'Failed to delete staff records! Error: ' . mysqli_error($conn)]);
 	}
+
+	// Step 7: Enable foreign key checks again
+	mysqli_query($conn, "SET FOREIGN_KEY_CHECKS = 1");
 
 	mysqli_close($conn); // Close the database connection
 }
-?>
