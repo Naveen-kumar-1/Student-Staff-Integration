@@ -22,12 +22,12 @@ $dbname     = "student_staff_integration";
 
 // Create a connection
 $conn = new mysqli($servername, $username, $password, $dbname);
-
 // Check connection
 if ($conn->connect_error) {
 	echo json_encode(['success' => false, 'message' => 'Database connection failed: ' . $conn->connect_error]);
 	exit;
 }
+
 
 // Check if the assignments table exists, if not, create it
 $tableCheckQuery = "CREATE TABLE IF NOT EXISTS assignments (
@@ -89,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		// Send an email notification to each student
 		$emailSuccess = true;
 		foreach ($emails as $email) {
+
 			if (class_exists(\SSIP\EmailHelper\sendEmail::class)) {
 				$response = \SSIP\EmailHelper\sendEmail::sendEmail($email, 'assignment');
 

@@ -91,9 +91,9 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
 	// Send email to each student in the class
 	while ( $student = $result_students->fetch_assoc() ) {
 		$email = $student['email'];
-		if(class_exists(\SSIP\EmailHelper\sendEmail::class)) {
-			\SSIP\EmailHelper\sendEmail::sendEmailToTheRecipient( $email, $subject, $body, $altBody );
-		}
+			if(class_exists(\SSIP\EmailHelper\sendEmail::class)) {
+				\SSIP\EmailHelper\sendEmail::sendEmailToTheRecipient( $email, $subject, $body, $altBody );
+			}
 	}
 
 	// Insert new notice into the database after sending emails

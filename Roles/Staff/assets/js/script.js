@@ -623,9 +623,8 @@ function deleteASingleFile(fileName, className, subject, dueDate, studentID, ass
     // Show the modal
     document.getElementById('deleteFileModal').style.display = 'block';
 }
+ function deleteSingfileFunction () {
 
-// Function to confirm deletion
-document.getElementById('confirmDelete').onclick = function () {
     // Make an AJAX request to delete the file
     fetch('actions/assignment/deleteSinglePDFFile.php', {
         method: 'POST',
@@ -639,11 +638,11 @@ document.getElementById('confirmDelete').onclick = function () {
             due_date: dueDateToDelete,
             student_id: studentIDToDelete,
             assignment_id: assignmentIDToDelete
-
         })
     })
         .then(response => response.json())
         .then(data => {
+            console.log('Server response:', data); // Log response from server
             if (data.success) {
                 showToast('File deleted successfully', 'success');
                 setTimeout(function () {
@@ -651,7 +650,6 @@ document.getElementById('confirmDelete').onclick = function () {
                         location.reload(); // Reload the page to reflect the changes
                     }
                 }, 3000);
-                // Optionally, remove the file entry from the UI
             } else {
                 showToast('Failed to delete file: ' + data.message, 'error');
             }
@@ -663,10 +661,12 @@ document.getElementById('confirmDelete').onclick = function () {
             console.error('Error:', error);
             showToast('Failed to delete file.', 'error');
         });
+
 };
+// Function to confirm deletion
 
 // Function to cancel deletion
-document.getElementById('cancelDelete').onclick = function () {
+document.getElementById('cancelSinglePDFDelete').onclick = function () {
     // Hide the modal
     document.getElementById('deleteFileModal').style.display = 'none';
 };
@@ -792,15 +792,20 @@ function selectOption(option) {
     selectBox.innerHTML = option.innerHTML; // Update selected value
     selectBox.setAttribute('data-value', option.getAttribute('data-value')); // Store selected status
 }
-
 function saveLeaveStatus(button) {
+    const savebutton =  document.getElementById('saveLeaveStatus');
     const approveBox = button.closest('.approve-leave-box');
     const leaveId = approveBox.getAttribute('data-id'); // Get the leave request ID
     const newStatus = approveBox.querySelector('.selected-option').getAttribute('data-value');
+
     if (!leaveId || !newStatus) {
-        showToast('Error: Missing leave request ID or status.','error');
+        showToast('Error: Missing leave request ID or status.', 'error');
         return;
     }
+
+    // Disable the button to prevent multiple clicks
+    savebutton.setAttribute('disabled', 'true');
+    savebutton.style.cursor = 'not-allowed'; // Optional: change cursor to indicate disabled state
 
     // AJAX request
     fetch('actions/Leave/updateLeaveStatus.php', {
@@ -822,8 +827,15 @@ function saveLeaveStatus(button) {
         .catch(error => {
             console.error('Error:', error);
             showToast('An error occurred while updating leave status.', 'error');
+        })
+        .finally(() => {
+            // Re-enable the button after the request is completed
+            savebutton.removeAttribute('disabled');
+            savebutton.style.cursor = 'pointer'; // Optional: change cursor back to normal
         });
 }
+
+
 
 
 // Function to show the leave details in a popup

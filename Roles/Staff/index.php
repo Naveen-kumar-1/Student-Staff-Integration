@@ -163,8 +163,8 @@ function getSiteUrl()
                     <div class="modal-content">
                         <h3>Are you sure you want to delete this file?</h3>
                         <div class="modal-actions">
-                            <button id="confirmDelete" class="btn btn-danger">Yes, Delete</button>
-                            <button id="cancelDelete" class="btn btn-secondary">Cancel</button>
+                            <button id="confirmSinglePDFDelete" onclick="deleteSingfileFunction()" class="btn btn-danger">Yes, Delete this</button>
+                            <button id="cancelSinglePDFDelete" class="btn btn-secondary">Cancel</button>
                         </div>
                     </div>
 

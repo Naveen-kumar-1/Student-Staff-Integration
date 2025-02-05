@@ -22,10 +22,10 @@ class sendEmail {
 			return self::sendEmailToTheRecipient( $email, $subject, $body, $alterBody );
 
 		} elseif ($action === 'assignment') {
-			$assignment_details  = $_SESSION['assignment_data']['assignment_details'];
-			$assignment_class    = $_SESSION['assignment_data']['assignment_class'];
-			$assignment_subject  = $_SESSION['assignment_data']['assignment_subject'];
-			$assignment_due_date = $_SESSION['assignment_data']['assignment_due_date'];
+			$assignment_details  = $_SESSION['assignment_details'];
+			$assignment_class    = $_SESSION['assignment_class'];
+			$assignment_subject  = $_SESSION['assignment_subject'];
+			$assignment_due_date = $_SESSION['assignment_due_date'];
 
 			// Build the subject for the new assignment
 			$subject = "New Assignment: $assignment_subject Due on $assignment_due_date";
@@ -39,7 +39,7 @@ class sendEmail {
 			<p><strong>Details:</strong></p>
 			<p>$assignment_details</p>
 			<p>Please make sure to complete and submit it by the due date.</p>
-			<p>Best Regards,<br>Your School</p>
+			<p>Best Regards,<br>By Our Department</p>
 		";
 
 			// Plain-text version of the email (alternative body)

@@ -59,6 +59,10 @@
 	echo ' <span class="delete-all-leave-req" id="deleteAllLeaveReq">Delete All</span>';
 	while ($row = $result->fetch_assoc()) {
 	$statusClass = strtolower($row['status']); // Convert status to lowercase
+		$statusClass = strtolower($row['status']); // Convert status to lowercase
+		if ($statusClass === 'pending') {
+			$pendingCount++; // Increment the pending count
+		}
 	?>
 	<div class="approve-leave-box" data-id="<?php echo $row['id']; ?>"
 	     data-status="<?php echo $statusClass; ?>">
@@ -84,23 +88,7 @@
                                     </i>
                                     <?php echo ucfirst($statusClass); ?>
                                 </span>
-					<script>
-                        let leaveReqCount = <?php
-							$pendingCount = 0;
-							if ($statusClass === 'pending') {
-								$pendingCount++; // Increase the count if status is 'pending'
-							}
-							echo $pendingCount;
-							?>;
 
-                        const notificationBadge = document.getElementById('leave-notification');
-
-                        if (leaveReqCount > 0) {
-                            notificationBadge.textContent = leaveReqCount;
-                        } else {
-                            notificationBadge.style.display = "none";
-                        }
-					</script>
 
 					<i class="bx bx-chevron-down arrow"></i>
 				</div>
@@ -119,7 +107,7 @@
 					</div>
 				</div>
 			</div>
-			<button class="save-status-btn" onclick="saveLeaveStatus(this)">
+			<button id="saveLeaveStatus" class="save-status-btn" onclick="saveLeaveStatus(this)">
 				<i class="bx bxs-save"></i>
 			</button>
 		</div>
@@ -132,6 +120,17 @@ $stmt->close();
 $conn->close();
 ?>
 	<script>
+        let leaveReqCount = <?php
+			echo $pendingCount;
+			?>;
+
+        const notificationBadge = document.getElementById('leave-notification');
+
+        if (leaveReqCount > 0) {
+            notificationBadge.textContent = leaveReqCount;
+        } else {
+            notificationBadge.style.display = "none";
+        }
         document.getElementById("deleteAllLeaveReq").addEventListener("click", function () {
             document.getElementById("customDeletePopup").style.display = "flex";
         });
@@ -170,3 +169,6 @@ $conn->close();
                 });
         });
 	</script>
+
+
+

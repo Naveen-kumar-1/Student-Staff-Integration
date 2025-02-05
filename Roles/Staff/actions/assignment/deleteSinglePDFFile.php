@@ -1,7 +1,6 @@
 <?php
 header( 'Content-Type: application/json' );
 session_start();
-
 // Check if staff is logged in
 if ( ! isset( $_SESSION['staff_id'] ) ) {
 	echo json_encode( [ 'success' => false, 'message' => 'Staff not logged in' ] );

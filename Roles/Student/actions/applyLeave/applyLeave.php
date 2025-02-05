@@ -1,11 +1,14 @@
 <?php
 header('Content-Type: application/json'); // Set response type to JSON
+
 // Database connection
 $host = "localhost";
 $user = "root";
 $pass = "";
 $dbname = "student_staff_integration";
-
+if(file_exists('../../../../vendor/autoload.php')){
+    require '../../../../vendor/autoload.php';
+}
 $conn = new mysqli($host, $user, $pass, $dbname);
 
 // Check connection
@@ -35,12 +38,10 @@ $student_class = $_POST['student_class'] ?? '';
 $leave_date = $_POST['leave_date'] ?? '';
 $leave_reason = $_POST['leave_reason'] ?? '';
 // Validate inputs
-if (empty($student_name) || empty($student_id) || empty($student_class) || empty($leave_date) || empty($leave_reason)) {
-    echo json_encode(['success' => false, 'message' => 'All fields are required']);
-    exit;
-}
-// **Find the staff responsible for the class**
-$staffQuery = "SELECT staff_id FROM staffs WHERE class_adviser = ?";
+
+
+// Find the staff responsible for the class
+$staffQuery = "SELECT staff_id, email FROM staffs WHERE class_adviser = ?";
 $stmt = $conn->prepare($staffQuery);
 $stmt->bind_param("s", $student_class);
 $stmt->execute();
@@ -52,10 +53,14 @@ if (!$staff) {
     exit;
 }
 
-$staff_id = $staff['staff_id']; // Get the responsible staff ID
+$staff_id = $staff['staff_id'];
+$staff_email = $staff['email']; // Get the staff's email
 
-// **UPDATE REQUEST (If ID is provided)**
+
+
+// UPDATE REQUEST (If ID is provided)
 if (!empty($id)) {
+
     // Check if the leave request exists and is still "Pending"
     $checkQuery = "SELECT status FROM leave_requests WHERE id = ?";
     $stmt = $conn->prepare($checkQuery);
@@ -80,18 +85,57 @@ if (!empty($id)) {
     $stmt->bind_param("sssi", $leave_date, $leave_reason, $staff_id, $id);
 
     if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'Leave request updated successfully!']);
+        // Send email notification for updated request
+        $subject = "Updated Leave Request from " . $student_name;
+        $body = "
+            <p>Dear Staff,</p>
+            <p>The leave request from student <strong>$student_name ($student_id)</strong> has been updated.</p>
+            <p><strong>Class:</strong> $student_class</p>
+            <p><strong>Leave Date:</strong> $leave_date</p>
+            <p><strong>Reason:</strong> $leave_reason</p>
+            <p>Best Regards,<br>$student_name ($student_id)</p>
+        ";
+        $altBody = "The leave request from student $student_name ($student_id) has been updated. Class: $student_class, Leave Date: $leave_date, Reason: $leave_reason.";
+        if (class_exists('\SSIP\EmailHelper\sendEmail')) {
+         $response =  \SSIP\EmailHelper\sendEmail::sendEmailToTheRecipient($staff_email, $subject, $body, $altBody);
+
+         if($response) {
+
+             echo json_encode( [ 'success' => true, 'message' => 'Leave request updated successfully!' ] );
+         }}
     } else {
         echo json_encode(['success' => false, 'message' => 'Failed to update leave request']);
     }
 } else {
-    // **INSERT NEW LEAVE REQUEST**
+    if (empty($student_name) || empty($student_id) || empty($student_class) || empty($leave_date) || empty($leave_reason)) {
+        echo json_encode(['success' => false, 'message' => 'All fields are required']);
+        exit;
+    }
+    // INSERT NEW LEAVE REQUEST
     $stmt = $conn->prepare("INSERT INTO leave_requests (student_name, student_id, student_class, leave_date, leave_reason, staff_id, status) 
                             VALUES (?, ?, ?, ?, ?, ?, 'Pending')");
     $stmt->bind_param("ssssss", $student_name, $student_id, $student_class, $leave_date, $leave_reason, $staff_id);
 
     if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'Leave request submitted successfully!']);
+        // Send email notification for new leave request
+        $subject = "New Leave Request from " . $student_name;
+        $body = "
+            <p>Dear Staff,</p>
+            <p>A new leave request has been submitted by student <strong>$student_name ($student_id)</strong>.</p>
+            <p><strong>Class:</strong> $student_class</p>
+            <p><strong>Leave Date:</strong> $leave_date</p>
+            <p><strong>Reason:</strong> $leave_reason</p>
+            <p>Best Regards,<br>$student_name ($student_id)</p>
+        ";
+        $altBody = "A new leave request has been submitted by student $student_name ($student_id). Class: $student_class, Leave Date: $leave_date, Reason: $leave_reason.";
+
+        if (class_exists('\SSIP\EmailHelper\sendEmail')) {
+            $response =  \SSIP\EmailHelper\sendEmail::sendEmailToTheRecipient($staff_email, $subject, $body, $altBody);
+
+            if($response) {
+
+                echo json_encode( [ 'success' => true, 'message' => 'Leave request daved successfully!' ] );
+            }}
     } else {
         echo json_encode(['success' => false, 'message' => 'Failed to apply leave']);
     }

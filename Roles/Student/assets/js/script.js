@@ -13,7 +13,6 @@ function showContent(contentId) {
     }
 }
 
-
 document.addEventListener('DOMContentLoaded', function () {
     const submitBtns = document.querySelectorAll('.submit-btn');
 
@@ -25,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const studentId = this.dataset.studentId;
 
             const popupFormContainer = document.getElementById('popup-form');
-            console.log(popupFormContainer)
+            console.log(popupFormContainer);
             popupFormContainer.innerHTML = `
                 <div class="popup-form">
                     <span class="close-btn" onclick="closePopupForm()">&times;</span>
@@ -47,10 +46,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Handle form submission with JS
             const assignmentForm = document.querySelector('.assignment-form');
+            const submitButton = assignmentForm.querySelector('#submit-assignment-pdf');
+
             assignmentForm.addEventListener('submit', function (event) {
                 event.preventDefault(); // Prevent default form submission
 
                 const formData = new FormData(this); // Collect form data
+
+                // Disable the submit button to prevent double-clicking
+                submitButton.disabled = true;
+                submitButton.textContent = 'Submitting...';
 
                 // AJAX request to PHP for handling submission
                 fetch('actions/submitAssignment/submitAssignment.php', {
@@ -84,11 +89,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         // Show a general error toast in case of fetch failure
                         showToast('An error occurred, please try again.', 'error');
+                    })
+                    .finally(() => {
+                        // Re-enable the submit button after the request is done
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Submit';
                     });
             });
         });
     });
 });
+
 
 function closePopupForm() {
     const popupFormContainer = document.getElementById('popup-form');
@@ -187,12 +198,17 @@ document.getElementById('applyLeaveForm').addEventListener('submit', function (e
     let studentClass = document.getElementById('student-class').value;
     let leaveDate = document.getElementById('leave-date').value;
     let leaveReason = document.getElementById('leave-reason').value;
+    let submitButton = document.querySelector('#applyLeaveForm button[type="submit"]');
 
     // Validate form inputs
     if (leaveDate === "" || leaveReason.trim() === "") {
         showToast("Please fill in all required fields.", 'error');
         return;
     }
+
+    // Disable submit button to prevent double-click
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...'; // Optional: Change button text to indicate processing
 
     // Prepare data for AJAX request
     let formData = new FormData();
@@ -214,16 +230,84 @@ document.getElementById('applyLeaveForm').addEventListener('submit', function (e
                 document.getElementById('applyLeaveForm').reset(); // Reset the form
                 document.getElementById('leavePopup').style.display = 'none'; // Hide popup
                 setTimeout(function () {
-
                     location.reload(); // Reload the page to reflect the changes
-
                 }, 3000);
-
             } else {
                 showToast("Error: " + data.message, 'error');
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error:', error))
+        .finally(() => {
+            // Re-enable the submit button after the request completes
+            submitButton.disabled = false;
+            submitButton.textContent = 'Submit'; // Reset button text
+        });
+});
+
+
+// Show edit popup with data
+function editLeaveRequest(id) {
+    fetch(`actions/applyLeave/getLeaveRequest.php?id=${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById("edit-id").value = data.leave.id;
+                document.getElementById("edit-student-name").value = data.leave.student_name;
+                document.getElementById("edit-student-id").value = data.leave.student_id;
+                document.getElementById("edit-student-class").value = data.leave.student_class;
+                document.getElementById("edit-leave-date").value = data.leave.leave_date;
+                document.getElementById("edit-leave-reason").value = data.leave.leave_reason;
+                document.getElementById("editPopup").style.display = "flex";
+            } else {
+                showToast("Error fetching leave request!", "error");
+            }
+        });
+}
+
+// Close edit popup
+document.getElementById("closeEditPopup").addEventListener("click", function () {
+    document.getElementById("editPopup").style.display = "none";
+});
+// Submit edited data
+document.getElementById("editLeaveForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    let submitButton = document.querySelector('#editLeaveForm button[type="submit"]');
+
+    // Disable the submit button to prevent multiple clicks
+    submitButton.disabled = true;
+    submitButton.textContent = 'Updating...'; // Optional: Show processing message
+
+    let formData = new FormData();
+    formData.append("id", document.getElementById("edit-id").value);
+    formData.append("leave_date", document.getElementById("edit-leave-date").value);
+    formData.append("leave_reason", document.getElementById("edit-leave-reason").value);
+    formData.append('student_class',document.getElementById("edit-student-class").value)
+    formData.append('student_name',document.getElementById('edit-student-name').value)
+    formData.append('student_id',document.getElementById('edit-student-id').value)
+
+    fetch("actions/applyLeave/applyLeave.php", {
+        method: "POST",
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast("Leave updated successfully!", 'success');
+                location.reload(); // Refresh the page after successful update
+            } else {
+                showToast("Error: " + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast("Error occurred while updating the leave request.", 'error');
+        })
+        .finally(() => {
+            // Re-enable the submit button once the request completes
+            submitButton.disabled = false;
+            submitButton.textContent = 'Update'; // Reset button text
+        });
 });
 
 // Show custom confirmation popup
@@ -257,53 +341,4 @@ document.getElementById("confirmYes").addEventListener("click", function () {
             document.getElementById("confirmPopup").style.display = "none"; // Hide popup
         })
         .catch(error => console.error("Error:", error));
-});
-
-// Show edit popup with data
-function editLeaveRequest(id) {
-    fetch(`actions/applyLeave/getLeaveRequest.php?id=${id}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById("edit-id").value = data.leave.id;
-                document.getElementById("edit-student-name").value = data.leave.student_name;
-                document.getElementById("edit-student-id").value = data.leave.student_id;
-                document.getElementById("edit-student-class").value = data.leave.student_class;
-                document.getElementById("edit-leave-date").value = data.leave.leave_date;
-                document.getElementById("edit-leave-reason").value = data.leave.leave_reason;
-                document.getElementById("editPopup").style.display = "flex";
-                showToast('Leave Deleted Successfully', 'success');
-            } else {
-                showToast("Error fetching leave request!", "error");
-            }
-        });
-}
-
-// Close edit popup
-document.getElementById("closeEditPopup").addEventListener("click", function () {
-    document.getElementById("editPopup").style.display = "none";
-});
-
-// Submit edited data
-document.getElementById("editLeaveForm").addEventListener("submit", function (event) {
-    event.preventDefault();
-
-    let formData = new FormData();
-    formData.append("id", document.getElementById("edit-id").value);
-    formData.append("leave_date", document.getElementById("edit-leave-date").value);
-    formData.append("leave_reason", document.getElementById("edit-leave-reason").value);
-
-    fetch("actions/applyLeave/applyLeave.php", {
-        method: "POST",
-        body: formData
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showToast("Leave updated successfully!", 'success');
-                location.reload();
-            } else {
-                showToast("Error: " + data.message, 'error');
-            }
-        });
 });

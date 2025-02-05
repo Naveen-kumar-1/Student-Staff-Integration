@@ -1,6 +1,8 @@
 <?php
 header('Content-Type: application/json'); // JSON response
-
+if(file_exists('../../../../vendor/autoload.php')){
+    require '../../../../vendor/autoload.php';
+}
 // Database connection
 $host = "localhost";
 $user = "root";
@@ -38,7 +40,49 @@ if ($result->num_rows === 0) {
 $leaveRequest = $result->fetch_assoc();
 $studentId = $leaveRequest['student_id'];
 
-// If status is "Trash", delete the row
+// Fetch student's email
+$studentEmailQuery = "SELECT email FROM students WHERE student_id = ?";
+$stmt = $conn->prepare($studentEmailQuery);
+$stmt->bind_param("s", $studentId);
+$stmt->execute();
+$emailResult = $stmt->get_result();
+
+if ($emailResult->num_rows === 0) {
+    echo json_encode(['success' => false, 'message' => 'Student email not found']);
+    exit;
+}
+
+$studentEmail = $emailResult->fetch_assoc()['email'];
+
+// Email content based on status
+$subject = "Your Leave Request Status Update";
+$body = "";
+$altBody = "Your leave request has been updated.";
+if (strtolower($status) === 'approved') {
+    $body = "
+        <p>Dear Student,</p>
+        <p>Your leave request has been <strong>approved</strong>.</p>
+        <p>Best regards,<br>College Administration</p>
+    ";
+    $altBody = "Your leave request has been approved.";
+} elseif (strtolower($status) === 'rejected') {
+    $body = "
+        <p>Dear Student,</p>
+        <p>Your leave request has been <strong>rejected</strong>.</p>
+        <p>Best regards,<br>College Administration</p>
+    ";
+    $altBody = "Your leave request has been rejected.";
+}
+
+// Using your custom Gmail email sending function if class exists
+if (class_exists(\SSIP\EmailHelper\sendEmail::class)) {
+    \SSIP\EmailHelper\sendEmail::sendEmailToTheRecipient($studentEmail, $subject, $body, $altBody);
+} else {
+    echo json_encode(['success' => false, 'message' => 'Email sending function not available']);
+    exit;
+}
+
+// Proceed with updating the leave request status
 if (strtolower($status) === 'trash') {
     $deleteQuery = "DELETE FROM leave_requests WHERE id = ?";
     $stmt = $conn->prepare($deleteQuery);
