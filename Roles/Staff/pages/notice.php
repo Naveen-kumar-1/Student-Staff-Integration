@@ -81,7 +81,7 @@
 	<input type="date" id="notice-date">
 	<span class="error-message" id="notice-date-error"></span><br>
 
-	<button onclick="saveNotice()">Save</button>
+    <button id="save-notice-button" onclick="saveNotice()">Save Notice</button>
 	<button onclick="cancelNoticeForm()">Cancel</button>
 </div>
 <?php } ?>

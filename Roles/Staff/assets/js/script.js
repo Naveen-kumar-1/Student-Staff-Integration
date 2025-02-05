@@ -318,7 +318,6 @@ function showNoticeForm(formType, noticeId = null) {
     // Show the notice form
     document.querySelector('.notice-form').style.display = 'block';
 }
-
 // Save or edit notice
 function saveNotice() {
     const title = document.getElementById('notice-title').value;
@@ -365,6 +364,10 @@ function saveNotice() {
     };
 
     const url = noticeId ? 'actions/notice/updateNotice.php' : 'actions/notice/saveNotice.php';
+    const saveButton = document.getElementById('save-notice-button'); // Add the save button reference
+
+    // Disable the save button to prevent double-clicks
+    saveButton.disabled = true;
 
     const xhr = new XMLHttpRequest();
     xhr.open('POST', url, true);
@@ -372,6 +375,10 @@ function saveNotice() {
 
     xhr.onload = function () {
         const data = JSON.parse(xhr.responseText);
+
+        // Re-enable the save button after response is received
+        saveButton.disabled = false;
+
         if (data.success) {
             showToast(noticeId ? 'Notice updated successfully!' : 'Notice created successfully!', 'success');
             cancelNoticeForm();
@@ -381,6 +388,12 @@ function saveNotice() {
         } else {
             showToast('Error: ' + data.message, 'error');
         }
+    };
+
+    xhr.onerror = function () {
+        // Re-enable the save button in case of error
+        saveButton.disabled = false;
+        showToast('Error: Unable to submit the form. Please try again.', 'error');
     };
 
     xhr.send(JSON.stringify(noticeData)); // Send as JSON
