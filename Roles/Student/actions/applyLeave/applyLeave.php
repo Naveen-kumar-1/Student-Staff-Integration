@@ -2,14 +2,13 @@
 header('Content-Type: application/json'); // Set response type to JSON
 
 // Database connection
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "student_staff_integration";
+
 if(file_exists('../../../../vendor/autoload.php')){
     require '../../../../vendor/autoload.php';
 }
-$conn = new mysqli($host, $user, $pass, $dbname);
+if(file_exists('../../../../config.php')) {
+    include('../../../../config.php');
+}
 
 // Check connection
 if ($conn->connect_error) {

@@ -52,37 +52,39 @@ if ($assignmentDirectory && is_dir($assignmentDirectory)) {
 }
 
 // Database deletion logic
-$db = new mysqli('localhost', 'root', '', 'student_staff_integration'); // Use correct credentials
+if(file_exists('../../../../config.php')) {
+    include('../../../../config.php');
+}
 
-if ($db->connect_error) {
+if ($conn->connect_error) {
     $response['success'] = false;
-    $response['message'] = 'Database connection failed: ' . $db->connect_error;
+    $response['message'] = 'Database connection failed: ' . $conn->connect_error;
     echo json_encode($response);
     exit;
 } else {
     // Check if the record exists in the database and delete it
-    $stmt = $db->prepare("DELETE FROM assignments WHERE id = ?");
+    $stmt = $conn->prepare("DELETE FROM assignments WHERE id = ?");
     if ($stmt) {
         $stmt->bind_param('i', $assignmentID);
         if ($stmt->execute()) {
             $recordDeleted = true;
         } else {
             $response['success'] = false;
-            $response['message'] = 'Failed to remove record from database. Error: ' . $db->error;
+            $response['message'] = 'Failed to remove record from database. Error: ' . $conn->error;
             $stmt->close();
-            $db->close();
+            $conn->close();
             echo json_encode($response);
             exit;
         }
         $stmt->close();
     } else {
         $response['success'] = false;
-        $response['message'] = 'Failed to prepare database query. Error: ' . $db->error;
-        $db->close();
+        $response['message'] = 'Failed to prepare database query. Error: ' . $conn->error;
+        $conn->close();
         echo json_encode($response);
         exit;
     }
-    $db->close();
+    $conn->close();
 }
 
 // Now, check if the class folder is empty after deleting the due date folder

@@ -13,12 +13,9 @@ $data          = json_decode( file_get_contents( "php://input" ), true );
 $assignment_id = $data['assignment_id'];
 
 // Database connection
-$servername = "localhost";
-$username   = "root";
-$password   = "";
-$dbname     = "student_staff_integration";
-
-$conn = new mysqli( $servername, $username, $password, $dbname );
+if(file_exists('../../../../config.php')) {
+	include('../../../../config.php');
+}
 
 // Check connection
 if ( $conn->connect_error ) {

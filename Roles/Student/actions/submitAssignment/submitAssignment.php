@@ -1,19 +1,14 @@
 <?php
 
 // Database connection
-$servername = "localhost";
-$username   = "root";
-$password   = "";
-$dbname     = "student_staff_integration";
+if(file_exists('../../../../config.php')) {
+	include('../../../../config.php');
+}
 if(file_exists('../../../../vendor/autoload.php')){
 	require '../../../../vendor/autoload.php';
 }
-// Create connection
-$mysqli = new mysqli($servername, $username, $password, $dbname);
 
-if ($mysqli->connect_error) {
-	die("Connection failed: " . $mysqli->connect_error);
-}
+
 
 // Collect form data
 $first_name    = $_POST['first_name'];
@@ -34,7 +29,7 @@ if (isset($_FILES['assignment_file']) && $_FILES['assignment_file']['error'] == 
 
 	// Get assignment details from database to determine the folder structure and new file name
 	$assignment_query = "SELECT class, subject, due_date FROM assignments WHERE id = ?";
-	$stmt = $mysqli->prepare($assignment_query);
+	$stmt = $conn->prepare($assignment_query);
 	$stmt->bind_param('i', $assignment_id);
 
 	if (!$stmt->execute()) {
@@ -72,7 +67,7 @@ if (isset($_FILES['assignment_file']) && $_FILES['assignment_file']['error'] == 
 
 			// Get the staff email for the class and subject
 			$staff_query = "SELECT email FROM staffs WHERE class_adviser = ?";
-			$stmt_staff  = $mysqli->prepare($staff_query);
+			$stmt_staff  = $conn->prepare($staff_query);
 			$stmt_staff->bind_param('s', $assignment['class']);
 
 			if (!$stmt_staff->execute()) {
@@ -128,20 +123,20 @@ if (isset($_FILES['assignment_file']) && $_FILES['assignment_file']['error'] == 
 
 			// Check if the 'submitted_students' column exists, and add it if not
 			$check_column_query = "SHOW COLUMNS FROM `assignments` LIKE 'submitted_students'";
-			$check_result       = $mysqli->query($check_column_query);
+			$check_result       = $conn->query($check_column_query);
 
 			if ($check_result->num_rows == 0) {
 				// If the column does not exist, alter the table to add it
 				$alter_table_query = "ALTER TABLE `assignments` ADD `submitted_students` JSON NULL";
-				if (!$mysqli->query($alter_table_query)) {
-					echo json_encode(['success' => false, 'error' => 'Error adding column: ' . $mysqli->error]);
+				if (!$conn->query($alter_table_query)) {
+					echo json_encode(['success' => false, 'error' => 'Error adding column: ' . $conn->error]);
 					exit;
 				}
 			}
 
 			// Get the existing submitted_students data
 			$submitted_query = "SELECT submitted_students FROM assignments WHERE id = ?";
-			$stmt = $mysqli->prepare($submitted_query);
+			$stmt = $conn->prepare($submitted_query);
 			$stmt->bind_param('i', $assignment_id);
 
 			if (!$stmt->execute()) {
@@ -161,7 +156,7 @@ if (isset($_FILES['assignment_file']) && $_FILES['assignment_file']['error'] == 
 			// Update the assignment table with the new list of submitted students
 			$submitted_students_json = json_encode($submitted_students);
 			$update_query            = "UPDATE assignments SET submitted_students = ? WHERE id = ?";
-			$stmt                    = $mysqli->prepare($update_query);
+			$stmt                    = $conn->prepare($update_query);
 			$stmt->bind_param('si', $submitted_students_json, $assignment_id);
 
 			if ($stmt->execute()) {

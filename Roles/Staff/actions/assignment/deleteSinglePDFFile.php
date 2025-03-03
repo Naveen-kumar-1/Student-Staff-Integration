@@ -21,12 +21,9 @@ $base_directory = "../../../../uploads/assignment/" . $class_name . "/" . $subje
 $file_path      = $base_directory . $file_name;
 
 // Database connection
-$servername = "localhost";
-$username   = "root";
-$password   = "";
-$dbname     = "student_staff_integration";
-
-$conn = new mysqli( $servername, $username, $password, $dbname );
+if(file_exists('../../../../config.php')) {
+	include('../../../../config.php');
+}
 
 // Check connection
 if ( $conn->connect_error ) {

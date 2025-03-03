@@ -11,12 +11,9 @@ if ( ! isset( $_SESSION['staff_id'] ) ) {
 $staff_id = $_SESSION['staff_id'];
 
 // Database connection details
-$servername = "localhost";
-$username   = "root";
-$password   = "";
-$dbname     = "student_staff_integration";
-
-$conn = new mysqli( $servername, $username, $password, $dbname );
+if(file_exists('../../../../config.php')) {
+	include('../../../../config.php');
+}
 
 if ( $conn->connect_error ) {
 	echo json_encode( [ 'success' => false, 'message' => 'Database connection failed: ' . $conn->connect_error ] );

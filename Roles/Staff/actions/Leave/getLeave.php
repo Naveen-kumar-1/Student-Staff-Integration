@@ -2,12 +2,9 @@
 header('Content-Type: application/json'); // JSON response
 
 // Database connection
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "student_staff_integration";
-
-$conn = new mysqli($host, $user, $pass, $dbname);
+if(file_exists('../../../../config.php')) {
+	include('../../../../config.php');
+}
 
 // Check connection
 if ($conn->connect_error) {

@@ -1,12 +1,9 @@
 <?php
 header('Content-Type: application/json');
 
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "student_staff_integration";
-
-$conn = new mysqli($host, $user, $pass, $dbname);
+if(file_exists('../../../../config.php')) {
+    include('../../../../config.php');
+}
 
 if ($conn->connect_error) {
     die(json_encode(['success' => false, 'message' => 'Database connection failed']));

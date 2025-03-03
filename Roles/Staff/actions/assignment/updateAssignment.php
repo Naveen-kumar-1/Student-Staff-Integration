@@ -16,13 +16,9 @@ if ( ! isset( $_SESSION['staff_id'] ) ) {
 $staff_id = $_SESSION['staff_id'];
 
 // Database connection details
-$servername = "localhost";
-$username   = "root";
-$password   = "";
-$dbname     = "student_staff_integration";
-
-// Create a connection
-$conn = new mysqli( $servername, $username, $password, $dbname );
+if(file_exists('../../../../config.php')) {
+	include('../../../../config.php');
+}
 
 // Check connection
 if ( $conn->connect_error ) {

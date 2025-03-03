@@ -2,13 +2,9 @@
 session_start(); // Start the session to manage login state
 
 // Database connection
-$servername = "localhost";
-$username   = "root";
-$password   = "";
-$dbname     = "student_staff_integration";
-
-// Create connection
-$conn = new mysqli( $servername, $username, $password, $dbname );
+if(file_exists('../../../../config.php')) {
+	include('../../../../config.php');
+}
 
 // Check connection
 if ( $conn->connect_error ) {

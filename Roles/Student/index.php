@@ -7,14 +7,8 @@ if (!isset($_SESSION['student_id'])) {
 $student_id = $_SESSION['student_id'];
 
 // Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "student_staff_integration";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if(file_exists('../../config.php')) {
+    include('../../config.php');
 }
 
 // Query student data based on student ID

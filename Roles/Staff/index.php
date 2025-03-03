@@ -7,13 +7,9 @@ if (!isset($_SESSION['staff_id'])) {
 $staff_id = $_SESSION['staff_id'];
 
 // Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "student_staff_integration";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
+if(file_exists('../../config.php')) {
+	include('../../config.php');
+}
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }

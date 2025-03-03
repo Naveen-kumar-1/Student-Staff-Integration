@@ -1,6 +1,6 @@
 <?php
 // Get the current date
-$current_date = date('Y-m-d');
+$current_date = date('y-m-d');
 
 // Fetch students for class-wise display
 $stmt = $conn->prepare("SELECT * FROM students ORDER BY class, first_name");
@@ -77,7 +77,7 @@ foreach ($students_by_class as $class => $students) {
 		                break;
                 endswitch;
                 ?>
-            </span></h3>
+            </span> | <?php echo $current_date; ?></h3>
         <button class="save-button"
                 onclick="saveAttendance('<?php echo htmlspecialchars($class); ?>')">Save
         </button>
@@ -95,7 +95,9 @@ foreach ($students_by_class as $class => $students) {
             </tr>
             </thead>
             <tbody>
-			<?php foreach ($students as $student) {
+			<?php
+
+            foreach ($students as $student) {
 				// If attendance data exists, use it; otherwise, set default "Not Set"
 				$student_attendance = isset($attendance_data[$student['student_id']]) ? $attendance_data[$student['student_id']]['attendance'] : [
 					'period_1' => 'Not Set',
@@ -125,6 +127,7 @@ foreach ($students_by_class as $class => $students) {
                         <!-- Otherwise, display attendance options -->
                         <!-- 1st Period -->
                         <td>
+
                             <select class="attendance"
                                     data-student-id="<?php echo $student['student_id']; ?>"
                                     data-student-name="<?php echo htmlspecialchars($student['first_name'] . " " . $student['last_name']); ?>"

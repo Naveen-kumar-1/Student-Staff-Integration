@@ -1,14 +1,12 @@
 <?php
 session_start(); // Ensure session is started only once
-$servername = "localhost";
-$username   = "root";
-$password   = "";
-$dbname     = "student_staff_integration";
+
 if(file_exists('../../../../vendor/autoload.php')){
 	require '../../../../vendor/autoload.php';
 }
-// Create a connection
-$conn = new mysqli( $servername, $username, $password, $dbname );
+if(file_exists('../../../../config.php')) {
+	include('../../../../config.php');
+}
 
 // Check connection
 if ( $conn->connect_error ) {
